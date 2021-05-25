@@ -1,0 +1,33 @@
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+.ant-layout {
+    background: #fff;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+.ant-layout-header {
+    background: #f0f2f5;
+    display: inline-block;
+    z-index: 99;
+    position: fixed;              
+    padding: 0;
+    transition: background-color 0.3s ease-out;
+    height: 80px;   
+    width: 100%;
+}
+
+.ant-layout-content {
+    min-height: 80vh;
+    margin-top: 80px;
+}
+
+.ant-layout-footer {
+    background: #f0f2f5;
+    padding: 0%;
+}
+
+.ant-btn-text:hover {
+    background: #dedede;
+}
