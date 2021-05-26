@@ -1,10 +1,40 @@
 import { BranchesOutlined, HeartOutlined, InfoCircleOutlined, ShoppingCartOutlined, ShoppingOutlined, StarOutlined, TagOutlined } from "@ant-design/icons";
-import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate, List } from "antd";
+import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import InfiniteCarousel from 'react-leaf-carousel';
+import Avatar from "antd/lib/avatar/avatar";
 
 const data = [    
+    {
+        id: 1,
+        title: 'Product 1',
+        tag: 'OTC/VMS',
+        price: '$24.99',
+        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
+    },
+    {
+        id: 2,
+        title: 'Product 2',
+        tag: 'Personal Hygiene',
+        price: '$11.99',
+        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
+    },
+    {
+        id: 3,
+        title: 'Product 3',
+        tag: 'Food and beverages',
+        price: '$6.99',
+        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
+    },
+    {
+        id: 4,
+        title: 'Product 4',
+        tag: 'Skin care items',
+        price: '$7.50',
+        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
+    },
     {
         id: 5,
         title: 'Product 5',
@@ -60,7 +90,7 @@ function ProductDetail (props) {
                     {`Product ${id ? id : ''}`}
                 </Breadcrumb.Item>
             </Breadcrumb>
-            <Row gutter={[16, 16]} style={{ margin: '24px 0', padding: '24px 0' }}>
+            <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
                 <Col span={8} style={{ padding: 0 }}>
                     <img alt="example" src="http://ipharm.axiomthemes.com/wp-content/uploads/2019/02/7-min1.jpg" style={{ width: '100%', height: 'auto' }} />
                 </Col>
@@ -87,7 +117,7 @@ function ProductDetail (props) {
                         <div>
                             <BranchesOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
                             <Typography.Text style={{ fontSize: '18px' }}>Category:</Typography.Text>
-                            <Typography.Text style={{ display: 'block' }}>- Health, Care</Typography.Text>
+                            <Typography.Text style={{ display: 'block' }}>- Household cleaning</Typography.Text>
                         </div>
                         <div>
                             <StarOutlined style={{ fontSize: '18px', marginRight: '8px', marginTop: '16px' }} />
@@ -110,27 +140,87 @@ function ProductDetail (props) {
                 </Col>
             </Row>
             <Typography.Title level={4}>Reviews:</Typography.Title>
+            <Row gutter={[16, 16]}>
+                <Col span={6} style={{ padding: '0 16px' }}>
+                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
+                    <Typography.Paragraph agraph>
+                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
+                    </Typography.Paragraph>
+                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
+                        <div style={{ marginLeft: '8px' }}>
+                            <Typography.Title level={5} style={{ margin: 0 }}>
+                                Tom Cruise
+                            </Typography.Title>
+                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
+                        </div>
+                    </div>
+                </Col>
+                <Col span={6} style={{ padding: '0 16px' }}>
+                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
+                    <Typography.Paragraph agraph>
+                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
+                    </Typography.Paragraph>
+                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
+                        <div style={{ marginLeft: '8px' }}>
+                            <Typography.Title level={5} style={{ margin: 0 }}>
+                                Tom Cruise
+                            </Typography.Title>
+                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
+                        </div>
+                    </div>
+                </Col>
+                <Col span={6} style={{ padding: '0 16px' }}>
+                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
+                    <Typography.Paragraph agraph>
+                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
+                    </Typography.Paragraph>
+                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
+                        <div style={{ marginLeft: '8px' }}>
+                            <Typography.Title level={5} style={{ margin: 0 }}>
+                                Tom Cruise
+                            </Typography.Title>
+                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
+                        </div>
+                    </div>
+                </Col>
+                <Col span={6} style={{ padding: '0 16px' }}>
+                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
+                    <Typography.Paragraph agraph>
+                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
+                    </Typography.Paragraph>
+                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
+                        <div style={{ marginLeft: '8px' }}>
+                            <Typography.Title level={5} style={{ margin: 0 }}>
+                                Tom Cruise
+                            </Typography.Title>
+                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
             <Typography.Paragraph>
-                Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim. Fusce eu metus tincidunt, sagittis leo sit amet, fringilla felis. Pellentesque vehicula fringilla nunc eget consequat. Cras diam augue, vestibulum eget aliquam sit amet, sagittis scelerisque diam. Aliquam erat volutpat. Sed a quam id ex pharetra auctor eget ac sem. Vivamus interdum, orci sed vestibulum venenatis, velit orci faucibus libero, ut viverra libero tortor dictum tellus.
+                 
             </Typography.Paragraph>
-            <Typography.Title level={4}>Similar products:</Typography.Title>
-            <List
-                grid={{
-                    gutter: 16,
-                    xs: 2,
-                    sm: 2,
-                    md: 3,
-                    lg: 4,
-                    xl: 4,
-                    xxl: 6,
-                }}
-                dataSource={data}
-                renderItem={item => (
-                    <List.Item>
+            <Typography.Title level={4}>Similar products:</Typography.Title>            
+            <InfiniteCarousel                    
+                dots={false}
+                showSides={true}
+                sidesOpacity={.5}
+                sideSize={.1}
+                slidesToScroll={2}
+                slidesToShow={4}
+                scrollOnDevice={true}
+            >
+                {data.map(item => {
+                    return (
                         <ProductCard item={item} />
-                    </List.Item>
-                )}
-            />
+                    )
+                })}
+            </InfiniteCarousel>
         </div>
     )
 }

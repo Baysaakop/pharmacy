@@ -151,7 +151,7 @@ function CustomMenu (props) {
                                 <Link to="/products">Products</Link>
                             </Menu.Item>
                             <Menu.Item key="help" style={styleMenuItem} >
-                                <Link to="/help">Advice</Link>
+                                <Link to="/help">News</Link>
                             </Menu.Item>
                             <Menu.Item key="contact" style={styleMenuItem}>
                                 <Link to="/contact">Contact</Link>
