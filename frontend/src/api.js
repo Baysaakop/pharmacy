@@ -1,18 +1,18 @@
+const baseUrl = "http://localhost:8000/"
+
 const api = {
-    items: 'http://127.0.0.1:8000/api/items/items',
-    posts: 'http://127.0.0.1:8000/api/items/posts',
-    users: 'http://127.0.0.1:8000/api/users',
-    signin: 'http://127.0.0.1:8000/rest-auth/login/',
-    signup: 'http://127.0.0.1:8000/rest-auth/registration/',
-    passwordreset: 'http://127.0.0.1:8000/rest-auth/password/reset/',
-    passwordresetconfirm: 'http://127.0.0.1:8000/rest-auth/password/reset/confirm/',
-    authFacebook: 'http://127.0.0.1:8000/rest-auth/facebook/',
-    authGoogle: 'http://127.0.0.1:8000/rest-auth/google/',
-    profile: 'http://127.0.0.1:8000/rest-auth/user/',
-    mediaItems: 'http://127.0.0.1:8000/media/items',
-    mediaUsers: 'http://127.0.0.1:8000/media/users',
-    mediaUploads: 'http://127.0.0.1:8000/media/uploads',
-    ckeditor: 'http://127.0.0.1:8000/ckeditor/',
+    items: baseUrl + 'api/items/items',
+    posts: baseUrl + 'api/items/posts',
+    companies: baseUrl + 'api/items/companies',
+    categories: baseUrl + 'api/items/categories',
+    tags: baseUrl + 'api/items/tags',
+    favorites: baseUrl + 'api/items/favorites',
+    carts: baseUrl + 'api/items/carts',
+    users: baseUrl + 'api/users',
+    authFacebook: baseUrl + 'rest-auth/facebook/',
+    authGoogle: baseUrl + 'rest-auth/google/',
+    profile: baseUrl + 'rest-auth/user/',
+    ckeditor: baseUrl + 'ckeditor/',
 }
 
 export default api;

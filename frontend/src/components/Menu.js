@@ -47,25 +47,21 @@ function CustomMenu (props) {
     useEffect(() => {
         const menuItem = props.location.pathname.toString().split('/')[1]
         setCurrent(menuItem === '' ? 'home' : menuItem)
-        if (props.token) {
-            if (!user) {
-                axios({
-                    method: 'GET',
-                    url: api.profile,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Token ${props.token}`
-                    }
-                }).then(res => {                    
-                    setUser(res.data)
-                }).catch(err => {
-                    console.log(err.message)
-                })
-            }
-        } else {
-            setUser(null)
+        if (props.token && props.token !== null && !user) {
+            axios({
+                method: 'GET',
+                url: api.profile,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${props.token}`
+                }
+            }).then(res => {                    
+                setUser(res.data)
+            }).catch(err => {
+                console.log(err.message)
+            })
         }
-    }, [props.location, props.token, user]);
+    }, [props.location, props.token]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleMenuClick = (e) => {               
         setCurrent(e.key);
@@ -134,7 +130,7 @@ function CustomMenu (props) {
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
                         <Link to="/">
                             <div style={{ color: '#000', fontSize: '28px', fontWeight: 'bold', marginRight: '24px' }}>                        
-                                LOGO                        
+                                ЛОГО                        
                             </div>        
                         </Link>
                         <Menu 
@@ -145,31 +141,37 @@ function CustomMenu (props) {
                             style={styleMenuWeb}
                         >   
                             <Menu.Item key="about" style={styleMenuItem} >
-                                <Link to="/about">About</Link>
+                                <Link to="/about">Бидний тухай</Link>
                             </Menu.Item>             
-                            <Menu.Item key="items" style={styleMenuItem} >
-                                <Link to="/products">Products</Link>
+                            <Menu.Item key="products" style={styleMenuItem} >
+                                <Link to="/products">Бүтээгдэхүүн</Link>
                             </Menu.Item>
                             <Menu.Item key="help" style={styleMenuItem} >
-                                <Link to="/help">News</Link>
+                                <Link to="/help">Мэдээлэл</Link>
                             </Menu.Item>
                             <Menu.Item key="contact" style={styleMenuItem}>
-                                <Link to="/contact">Contact</Link>
+                                <Link to="/contact">Холбоо барих</Link>
                             </Menu.Item>                                                                      
                         </Menu>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                         <div style={{ marginRight: '16px' }}>
-                            <Badge count={0}>
-                                <Button size="large" type="text" icon={<HeartOutlined />} />
-                            </Badge>
-                        </div>
-                        <div style={{ marginRight: '16px' }}>
-                            <Badge count={1}>
-                                <Button size="large" type="text" icon={<ShoppingCartOutlined />} />
-                            </Badge>
+                            <Button size="large" type="ghost" icon={<HeartOutlined />} />
                         </div>                        
-                        <Button size="large" type="text" icon={<UserOutlined />} />                                                
+                        <div style={{ marginRight: '16px' }}>
+                            <Badge count={12} overflowCount={9} size="default" >
+                                <Button size="large" type="ghost" icon={<ShoppingCartOutlined />} />
+                            </Badge>
+                        </div> 
+                        { user ? (
+                            <Link to="/profile">
+                                <Button size="large" type="primary" style={{ width: '40px', height: '40px' }}>{user.username.toString().split(0, 1)}</Button>  
+                            </Link>
+                        ) : (
+                            <Link to="/login">
+                                <Button size="large" type="ghost" icon={<UserOutlined />} />                                                
+                            </Link>  
+                        )}                                                                     
                     </div>
                 </div>
             )}                        
