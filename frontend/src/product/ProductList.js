@@ -1,73 +1,44 @@
-import { Breadcrumb, Col, Input, List, Row, Typography } from "antd";
-import CheckableTag from "antd/lib/tag/CheckableTag";
-import { useState } from "react";
+import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag } from "antd";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import axios from "axios";
+import api from "../api";
 
-const data = [
-    {
-        id: 1,
-        title: 'Product 1',
-        tag: 'OTC/VMS',
-        price: '$24.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 2,
-        title: 'Product 2',
-        tag: 'Personal Hygiene',
-        price: '$11.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 3,
-        title: 'Product 3',
-        tag: 'Food and beverages',
-        price: '$6.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 4,
-        title: 'Product 4',
-        tag: 'Skin care items',
-        price: '$7.50',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 5,
-        title: 'Product 5',
-        tag: 'Feminene products',
-        price: '$40.00',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 6,
-        title: 'Product 6',
-        tag: 'Beauty items',
-        price: '$99.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 7,
-        title: 'Product 7',
-        tag: 'Seasonal products',
-        price: '$2.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 8,
-        title: 'Product 8',
-        tag: 'Household cleaning',
-        price: '$14.58',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-];
-
-const tags = ['OTC/VMS', 'Personal Hygiene', 'Food and beverages', 'Skin care items', 'Feminene products', 'Beauty items', 'Seasonal products', 'Household cleaning'];
+const { CheckableTag } = Tag
 
 function ProductList (props) {
 
     const [selectedTags, setSelectedTags] = useState([])
+    const [tags, setTags] = useState([])
+    const [items, setItems] = useState()
+
+    useEffect(() => {
+        getProducts()
+        getTags()
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    function getProducts () {
+        axios({
+            method: 'GET',
+            url: `${api.items}/`,            
+        }).then(res => {            
+            setItems(res.data.results)
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })
+    }
+
+    function getTags () {
+        axios({
+            method: 'GET',
+            url: `${api.tags}/`            
+        }).then(res => {            
+            setTags(res.data.results)
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })
+    }
 
     function selectTag (tag, checked) {
         const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag);
@@ -79,30 +50,30 @@ function ProductList (props) {
             <Breadcrumb style={{ margin: '24px 0' }}>
                 <Breadcrumb.Item>
                     <Link to="/">
-                        Home
+                        Нүүр хуудас
                     </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                    Products
+                    Бүтээгдэхүүн
                 </Breadcrumb.Item>
             </Breadcrumb>
             <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
                 <Col span={6} style={{ padding: ' 0 24px 0 0' }}>
                     <div style={{ width: '100%', border: '1px solid #f0f0f0', padding: '16px' }}>
-                        <Typography.Title level={5}>Search by name:</Typography.Title>
+                        <Typography.Title level={5}>Нэрээр хайх:</Typography.Title>
                         <Input />
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Tags:</Typography.Title>
-                        {tags.map(tag => (
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Төрөл:</Typography.Title>
+                        {tags ? tags.map(tag => (
                             <CheckableTag
-                                key={tag}
-                                checked={selectedTags ? selectedTags.indexOf(tag) > -1 : false}
-                                onChange={checked => selectTag(tag, checked)}
+                                key={tag.id}
+                                checked={selectedTags ? selectedTags.indexOf(tag.id) > -1 : false}
+                                onChange={checked => selectTag(tag.id, checked)}
                             >
-                                {tag}
+                                {tag.name}
                             </CheckableTag>
-                        ))}
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Brand:</Typography.Title>
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Price:</Typography.Title>
+                        )) : <></>}
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Үйлдвэрлэгч:</Typography.Title>
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Үнэ:</Typography.Title>
                     </div>                    
                 </Col>
                 <Col span={18} style={{ padding: 0 }}>
@@ -116,7 +87,7 @@ function ProductList (props) {
                             xl: 4,
                             xxl: 6,
                         }}
-                        dataSource={data}
+                        dataSource={items ? items : undefined}
                         renderItem={item => (
                             <List.Item>
                                 <ProductCard item={item} action={true} />

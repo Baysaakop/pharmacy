@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from .models import Company, Category, Tag, Item, Favorite, Cart, Post
+from .models import Company, Category, Tag, Item, Favorite, CartItem, Cart, Post
 from users.serializers import UserSerializer
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -34,12 +34,18 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ('id', 'user', 'item')
 
-class CartSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+class CartItemSerializer(serializers.ModelSerializer):    
     item = ItemSerializer(read_only=True, many=True)
     class Meta:
+        model = CartItem
+        fields = ('id', 'item', 'count')    
+
+class CartSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    items = CartItemSerializer(read_only=True, many=True)
+    class Meta:
         model = Cart
-        fields = ('id', 'user', 'item')    
+        fields = ('id', 'user', 'items')    
 
 class PostSerializer(serializers.ModelSerializer):       
     class Meta:

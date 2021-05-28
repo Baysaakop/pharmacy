@@ -156,20 +156,20 @@ function CustomMenu (props) {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                         <div style={{ marginRight: '16px' }}>
-                            <Button size="large" type="ghost" icon={<HeartOutlined />} />
+                            <Button size="large" type="text" icon={<HeartOutlined />} />
                         </div>                        
                         <div style={{ marginRight: '16px' }}>
-                            <Badge count={12} overflowCount={9} size="default" >
-                                <Button size="large" type="ghost" icon={<ShoppingCartOutlined />} />
+                            <Badge count={0} overflowCount={9} size="default" >
+                                <Button size="large" type="text" icon={<ShoppingCartOutlined />} />
                             </Badge>
                         </div> 
                         { user ? (
                             <Link to="/profile">
-                                <Button size="large" type="primary" style={{ width: '40px', height: '40px' }}>{user.username.toString().split(0, 1)}</Button>  
+                                <Button size="large" type="text" style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Button>  
                             </Link>
                         ) : (
                             <Link to="/login">
-                                <Button size="large" type="ghost" icon={<UserOutlined />} />                                                
+                                <Button size="large" type="text" icon={<UserOutlined />} />                                                
                             </Link>  
                         )}                                                                     
                     </div>

@@ -1,11 +1,23 @@
-import { EllipsisOutlined, HeartOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { Card, Tooltip, Typography, Modal, Rate } from "antd";
+import { EllipsisOutlined, HeartOutlined, ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
+import { Card, Tooltip, Typography, Modal } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function ProductCard (props) {
 
     const [visible, setVisible] = useState(false)
+
+    function getCategory (categories) {
+        let res = []
+        categories.forEach(element => {
+            res.push(element.name)
+        })
+        return res.toString()
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
 
     return (
         <div>            
@@ -15,34 +27,39 @@ function ProductCard (props) {
                 style={{ width: '100%' }}
                 cover={
                     <Link to={`/products/${props.item.id}`}>
-                        <img alt="example" src="http://ipharm.axiomthemes.com/wp-content/uploads/2019/02/7-min1.jpg" style={{ width: '100%', height: 'auto' }} />
+                        <img alt={props.item.name} src={props.item.image} style={{ width: '100%', height: 'auto' }} />
                     </Link>
                 }                
                 actions={ props.action ? [
-                    <Tooltip title="Add to favorite">
-                        <HeartOutlined key="love" />
+                    <Tooltip title="Хадгалах">
+                        <HeartOutlined key="save" />
                     </Tooltip>,
-                    <Tooltip title="Add to cart">
+                    <Tooltip title="Сагслах">
                         <ShoppingCartOutlined key="cart" />
                     </Tooltip>,
-                    <Tooltip title="Read description">
+                    <Tooltip title="Дэлгэрэнгүй">
                         <EllipsisOutlined key="ellip" onClick={() => setVisible(true)} />
                     </Tooltip>,                                        
                 ] : <></>}
             >
                 <Link to={`/products/${props.item.id}`}>
                     <Card.Meta 
-                        title={props.item.title}
-                        description={props.item.tag}
+                        title={props.item.name}    
+                        description={getCategory(props.item.category)}                    
                     />
-                    <div style={{ textAlign: 'center' }}>
-                        <Rate disabled allowHalf value={4} style={{ fontSize: '16px' }} />                    
-                        <Typography.Title level={4} style={{ margin: '8px 0 0 0', color: '#34495e' }}>{props.item.price}</Typography.Title>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>                        
+                        <div>
+                            <Typography.Title level={5} style={{ margin: '0', color: '#000' }}>{formatNumber(props.item.price)}₮</Typography.Title>
+                        </div>
+                        <div>
+                            <StarFilled style={{ color: '#f9ca24' }} />
+                            <Typography.Text> {props.item.rating / 10}</Typography.Text>
+                        </div>
                     </div>
                 </Link>
-                <Modal title={props.item.title} visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
+                <Modal title={props.item.name} visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
                     <Typography.Title level={5}>Description:</Typography.Title>
-                    <Typography.Paragraph>{props.item.info}</Typography.Paragraph>
+                    <Typography.Paragraph>{props.item.description}</Typography.Paragraph>
                 </Modal>
             </Card>            
         </div>

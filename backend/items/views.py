@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .models import Company, Category, Tag, Item, Favorite, Cart, Post
-from .serializers import CompanySerializer, CategorySerializer, TagSerializer, ItemSerializer, FavoriteSerializer, CartSerializer, PostSerializer
+from .models import Company, Category, Tag, Item, Favorite, CartItem, Cart, Post
+from .serializers import CompanySerializer, CategorySerializer, TagSerializer, ItemSerializer, FavoriteSerializer, CartItemSerializer, CartSerializer, PostSerializer
 from rest_framework import viewsets, filters
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -49,6 +49,9 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Item.objects.all().order_by('-created_at')
+        name = self.request.query_params.get('name', None)
+        if name is not None:
+            queryset = queryset.filter(name__icontains=name).distinct()
         return queryset
 
     def create(self, request, *args, **kwargs):              
@@ -70,11 +73,11 @@ class ItemViewSet(viewsets.ModelViewSet):
         if 'company' in request.data:
             item.company=Company.objects.filter(id=int(request.data['company']))[0]   
         if 'category' in request.data:
-            categories=request.data['category']
+            categories=request.data['category'].split(',')
             for cat in categories:
                 item.category.add(Category.objects.filter(id=int(cat))[0])
         if 'tag' in request.data:
-            tags=request.data['tag']
+            tags=request.data['tag'].split(',')
             for tag in tags:
                 item.tag.add(Tag.objects.filter(id=int(tag))[0])
         if 'image' in request.data:
@@ -103,12 +106,12 @@ class ItemViewSet(viewsets.ModelViewSet):
         if 'company' in request.data:
             item.company=Company.objects.filter(id=int(request.data['company']))[0]   
         if 'category' in request.data:
-            categories=request.data['category']
+            categories=request.data['category'].split(',')
             item.category.clear()
             for cat in categories:
                 item.category.add(Category.objects.filter(id=int(cat))[0])
         if 'tag' in request.data:
-            tags=request.data['tag']
+            tags=request.data['tag'].split(',')
             item.tag.clear()
             for tag in tags:
                 item.tag.add(Tag.objects.filter(id=int(tag))[0])
@@ -122,6 +125,43 @@ class ItemViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
+
+    def get_queryset(self):
+        queryset = Favorite.objects.all()
+        token = self.request.query_params.get('token', None)
+        if token is not None:
+            print(token)
+            user = Token.objects.get(key=token).user   
+            queryset = queryset.filter(user=user).distinct()
+        return queryset
+
+    def create(self, request, *args, **kwargs):              
+        user = Token.objects.get(key=request.data['token']).user   
+        item = Item.objects.get(id=int(request.data['item']))
+        favorite = Favorite.objects.create(
+            user=user            
+        )                      
+        favorite.item.add(item)
+        favorite.save()
+        serializer = FavoriteSerializer(favorite)
+        headers = self.get_success_headers(serializer.data)        
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):                         
+        favorite = self.get_object()                         
+        item = Item.objects.get(id=int(request.data['item']))
+        if item in favorite.item.all():
+            favorite.item.remove(item)
+        else:
+            favorite.item.add(item)        
+        favorite.save()
+        serializer = FavoriteSerializer(favorite)
+        headers = self.get_success_headers(serializer.data)        
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)     
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    serializer_class = CartItemSerializer
+    queryset = CartItem.objects.all()
 
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer

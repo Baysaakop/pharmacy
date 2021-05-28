@@ -11,6 +11,7 @@ import TagEdit from "../tag/TagEdit";
 import CompanyAdd from "../company/CompanyAdd";
 import CompanyEdit from "../company/CompanyEdit";
 import ProductAdd from "../product/ProductAdd";
+import ProductEdit from "../product/ProductEdit";
 
 function Admin (props) {
     const [user, setUser] = useState()
@@ -61,7 +62,7 @@ function Admin (props) {
                                 <ProductAdd token={props.token} />
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                <CategoryEdit token={props.token} />
+                                <ProductEdit token={props.token} />
                             </Tabs.TabPane>
                         </Tabs>
                     </Tabs.TabPane>

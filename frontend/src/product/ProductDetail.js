@@ -1,228 +1,220 @@
-import { BranchesOutlined, HeartOutlined, InfoCircleOutlined, ShoppingCartOutlined, ShoppingOutlined, StarOutlined, TagOutlined } from "@ant-design/icons";
-import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate } from "antd";
+import { CarOutlined, HeartOutlined, ShopOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
+import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate, message, Divider, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import InfiniteCarousel from 'react-leaf-carousel';
-import Avatar from "antd/lib/avatar/avatar";
-
-const data = [    
-    {
-        id: 1,
-        title: 'Product 1',
-        tag: 'OTC/VMS',
-        price: '$24.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 2,
-        title: 'Product 2',
-        tag: 'Personal Hygiene',
-        price: '$11.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 3,
-        title: 'Product 3',
-        tag: 'Food and beverages',
-        price: '$6.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 4,
-        title: 'Product 4',
-        tag: 'Skin care items',
-        price: '$7.50',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 5,
-        title: 'Product 5',
-        tag: 'Medications',
-        price: '$40.00',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 6,
-        title: 'Product 6',
-        tag: 'Care, Health',
-        price: '$99.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 7,
-        title: 'Product 7',
-        tag: 'Treatment',
-        price: '$2.99',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-    {
-        id: 8,
-        title: 'Product 8',
-        tag: 'Care, Health',
-        price: '$14.58',
-        info: 'Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.',
-    },
-];
+import axios from "axios"; 
+import api from "../api";
+import { connect } from 'react-redux';
 
 function ProductDetail (props) {
 
-    const [id, setId] = useState()
+    const [item, setItem] = useState()
+    const [favorite, setFavorite] = useState()
 
     useEffect(() => {
-        setId(props.match.params.id)
+        axios({
+            method: 'GET',
+            url: `${api.items}/${props.match.params.id}/`,            
+        }).then(res => {            
+            setItem(res.data)
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })        
+        if (props.token) {
+            getFavorite()
+        }
     }, [props.match.params.id])
+
+    function getFavorite () {
+        axios({
+            method: 'GET',
+            url: `${api.favorites}?token=${props.token}`,            
+        }).then(res => {        
+            if (res.data.count > 0) {        
+                console.log(res.data.results)        
+                setFavorite(res.data.results[0])
+            } else {
+                setFavorite(undefined)
+            }
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })     
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
+    function getCategory (categories) {
+        let res = []
+        categories.forEach(element => {
+            res.push(element.name)
+        })
+        return res.toString()
+    }
+
+    function save () {
+        if (props.token) {  
+            if (favorite) {                
+                axios({
+                    method: 'PUT',
+                    url: `${api.favorites}/${favorite.id}/`,
+                    data: {
+                        item: item.id,
+                        token: props.token
+                    }
+                }).then(res => {
+                    setFavorite(res.data)
+                }).catch(err => {
+                    console.log(err)
+                })
+            } else {
+                axios({
+                    method: 'POST',
+                    url: `${api.favorites}/`,
+                    data: {
+                        item: item.id, 
+                        token: props.token
+                    }
+                }).then(res => {
+                    setFavorite(res.data)
+                }).catch(err => {
+                    console.log(err)
+                })
+            }            
+        } else {
+            return <Redirect to="/login" />
+        }
+    }
 
     return (
         <div style={{ padding: '0px 10%' }}>    
-            <Breadcrumb style={{ margin: '24px 0' }}>
-                <Breadcrumb.Item>
-                    <Link to="/">
-                        Home
-                    </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>
-                    <Link to="/products">
-                        Products
-                    </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>                   
-                    {`Product ${id ? id : ''}`}
-                </Breadcrumb.Item>
-            </Breadcrumb>
-            <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
-                <Col span={8} style={{ padding: 0 }}>
-                    <img alt="example" src="http://ipharm.axiomthemes.com/wp-content/uploads/2019/02/7-min1.jpg" style={{ width: '100%', height: 'auto' }} />
-                </Col>
-                <Col span={16} style={{ padding: '0 0 0 32px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                            <Typography.Title level={2}>{`Product ${id ? id : ''}`}</Typography.Title>                            
-                        </div>
-                        <div>
-                            <Typography.Title level={3}>BRAND</Typography.Title>
-                        </div>
-                    </div>
-                    <InfoCircleOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
-                    <Typography.Text style={{ fontSize: '18px' }}>Description:</Typography.Text>
-                    <Typography.Paragraph>
-                        Etiam dignissim mattis fermentum. Quisque aliquet semper nisl at feugiat. Aliquam erat volutpat. Nulla dolor ligula, fermentum id dignissim ac, aliquet sagittis ex. Nulla tincidunt purus non felis interdum, et venenatis lectus imperdiet. Cras tincidunt tristique purus sollicitudin condimentum. Nulla tempus magna at justo faucibus efficitur. Mauris lobortis mi in magna aliquam, non bibendum ipsum pellentesque.
-                    </Typography.Paragraph>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>                        
-                        <div>
-                            <TagOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
-                            <Typography.Text style={{ fontSize: '18px' }}>Price:</Typography.Text>
-                            <Typography.Title level={3} style={{ margin: '0', color: '#34495e' }}>$10.99</Typography.Title>
-                        </div>
-                        <div>
-                            <BranchesOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
-                            <Typography.Text style={{ fontSize: '18px' }}>Category:</Typography.Text>
-                            <Typography.Text style={{ display: 'block' }}>- Household cleaning</Typography.Text>
-                        </div>
-                        <div>
-                            <StarOutlined style={{ fontSize: '18px', marginRight: '8px', marginTop: '16px' }} />
-                            <Typography.Text style={{ fontSize: '18px' }}>Rating:</Typography.Text>
-                            <div>
-                                <Rate allowHalf value={4.5}/>
-                                <span className="ant-rate-text">- 4.5</span>
+            {item ? (
+                <>
+                    <Breadcrumb style={{ margin: '24px 0' }}>
+                        <Breadcrumb.Item>
+                            <Link to="/">
+                                Нүүр хуудас
+                            </Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                            <Link to="/products">
+                                Бүтээгдэхүүн
+                            </Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>                   
+                            {item.name}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                    <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
+                        <Col span={8} style={{ padding: 0 }}>
+                            <div style={{ border: '1px solid #dedede', width: '100%', padding: '32px' }}>
+                                <img alt={item.name} src={item.image} style={{ width: '100%', height: 'auto' }} />
                             </div>
-                        </div>
-                    </div>                                                                                
-                    <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <div style={{ marginRight: '8px' }}>
-                            <Typography.Text style={{ fontSize: '18px' }}>Quantity:</Typography.Text>
-                            <InputNumber size="large" min={1} max={20} style={{ marginLeft: '8px' }} />          
-                        </div>                        
-                        <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }}>Add to cart</Button>
-                        <Button type="ghost" size="large" icon={<ShoppingOutlined />} style={{ marginRight: '8px' }}>Buy now</Button>
-                        <Button type="ghost" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }}>Add to favorites</Button>
-                    </div>
-                </Col>
-            </Row>
-            <Typography.Title level={4}>Reviews:</Typography.Title>
-            <Row gutter={[16, 16]}>
-                <Col span={6} style={{ padding: '0 16px' }}>
-                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
-                    <Typography.Paragraph agraph>
-                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
-                    </Typography.Paragraph>
-                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
-                        <div style={{ marginLeft: '8px' }}>
-                            <Typography.Title level={5} style={{ margin: 0 }}>
-                                Tom Cruise
-                            </Typography.Title>
-                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
-                        </div>
-                    </div>
-                </Col>
-                <Col span={6} style={{ padding: '0 16px' }}>
-                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
-                    <Typography.Paragraph agraph>
-                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
-                    </Typography.Paragraph>
-                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
-                        <div style={{ marginLeft: '8px' }}>
-                            <Typography.Title level={5} style={{ margin: 0 }}>
-                                Tom Cruise
-                            </Typography.Title>
-                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
-                        </div>
-                    </div>
-                </Col>
-                <Col span={6} style={{ padding: '0 16px' }}>
-                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
-                    <Typography.Paragraph agraph>
-                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
-                    </Typography.Paragraph>
-                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
-                        <div style={{ marginLeft: '8px' }}>
-                            <Typography.Title level={5} style={{ margin: 0 }}>
-                                Tom Cruise
-                            </Typography.Title>
-                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
-                        </div>
-                    </div>
-                </Col>
-                <Col span={6} style={{ padding: '0 16px' }}>
-                    <Rate value={4} disabled style={{ fontSize: '14px' }} />
-                    <Typography.Paragraph agraph>
-                    Sed ut tempus nisi. Morbi vel accumsan nunc. Suspendisse rhoncus urna odio, accumsan egestas ipsum porta eu. Nullam non odio vitae sapien ultrices dignissim.
-                    </Typography.Paragraph>
-                    <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <Avatar size={48} src="https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_auto:good%2Cw_300/MTc5ODc1NTM4NjMyOTc2Mzcz/gettyimages-693134468.jpg" />
-                        <div style={{ marginLeft: '8px' }}>
-                            <Typography.Title level={5} style={{ margin: 0 }}>
-                                Tom Cruise
-                            </Typography.Title>
-                            <Typography.Text type="secondary">May 25th, 2021</Typography.Text>
-                        </div>
-                    </div>
-                </Col>
-            </Row>
-            <Typography.Paragraph>
-                 
-            </Typography.Paragraph>
-            <Typography.Title level={4}>Similar products:</Typography.Title>            
-            <InfiniteCarousel                    
-                dots={false}
-                showSides={true}
-                sidesOpacity={.5}
-                sideSize={.1}
-                slidesToScroll={2}
-                slidesToShow={4}
-                scrollOnDevice={true}
-            >
-                {data.map(item => {
-                    return (
-                        <ProductCard item={item} />
-                    )
-                })}
-            </InfiniteCarousel>
+                        </Col>
+                        <Col span={16} style={{ padding: '0 0 0 32px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <Typography.Title level={3} style={{ margin: 0 }}>{item.name}</Typography.Title>                            
+                                    <Typography.Text type="secondary" style={{ fontSize: '16px' }}>{getCategory(item.category)}</Typography.Text>
+                                </div>
+                                <div>
+                                    {/* <Typography.Title level={3}>{item.company.image}</Typography.Title> */}
+                                    <img alt={item.company} src={item.company.image} style={{ height: '40px', width: 'auto', objectFit: 'scale-down' }} />
+                                </div>
+                            </div>                            
+                            <Divider style={{ margin: '16px 0' }} />
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>                        
+                                <div>                                    
+                                    <Typography.Title level={5} style={{ margin: '0' }}>Үнэ:</Typography.Title>
+                                    <Typography.Title level={2} style={{ margin: '0' }}>{formatNumber(item.price)}₮</Typography.Title>
+                                </div>                                
+                                <div>                                                                        
+                                    <Typography.Title level={5} style={{ margin: '0' }}>Үнэлгээ:</Typography.Title>
+                                    <div>
+                                        <Rate allowHalf value={item.rating / 10}/>
+                                        <span className="ant-rate-text" style={{ fontWeight: 'bold' }}>- {item.rating / 10}</span>
+                                    </div>
+                                </div>
+                            </div>                            
+                            <Divider style={{ margin: '16px 0' }} />                                                                                                                                                                  
+                            <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>                                                       
+                                <div style={{ marginRight: '8px' }}>
+                                    <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
+                                    <InputNumber defaultValue={1} size="large" min={1} max={100} style={{ marginLeft: '8px' }} />          
+                                </div>                                 
+                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }}>Сагсанд хийх</Button>
+                                <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ marginRight: '8px' }}>Захиалах</Button>                                
+                                <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }} onClick={save}>
+                                    { favorite && favorite.item.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
+                                </Button>
+                            </div>
+                            <Divider style={{ margin: '16px 0' }} />
+                            {item.tag.map(tag => {
+                                return (
+                                    <Tag>{tag.name}</Tag>
+                                )                                
+                            })}
+                            <Row gutter={[8, 8]} style={{ marginTop: '16px' }}>
+                                <Col span={12}>
+                                    <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px' }}>
+                                        <div>
+                                            <CarOutlined style={{ fontSize: '24px' }} />
+                                        </div>
+                                        <div style={{ marginLeft: '16px' }}>
+                                            <Typography.Text>Бүтээгдэхүүнээ захиалаад 24-48 цагийн дотор хүргэлтээр авах боломжтой.</Typography.Text>
+                                        </div>
+                                    </div>
+                                </Col>
+                                <Col span={12}>
+                                    <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px' }}>
+                                        <div>
+                                            <ShopOutlined style={{ fontSize: '24px' }} />
+                                        </div>
+                                        <div style={{ marginLeft: '16px' }}>
+                                            <Typography.Text>Бүтээгдэхүүнээ захиалаад өөрт ойр байрлах салбар дээрээс очиж авах боломжтой.</Typography.Text>
+                                        </div>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                    <div style={{ marginTop: '24px' }}>
+                        <Typography.Title level={4} style={{ margin: 0 }}>Бүтээгдэхүүний мэдээлэл:</Typography.Title>
+                        <Typography.Paragraph>
+                            {item.description}                                
+                        </Typography.Paragraph>
+                        <Typography.Title level={5} style={{ margin: 0 }}>Найрлага:</Typography.Title>
+                        <Typography.Paragraph>
+                            {item.ingredients}                                
+                        </Typography.Paragraph>
+                        <Typography.Title level={5} style={{ margin: 0 }}>Хэрэглэх заавар:</Typography.Title>
+                        <Typography.Paragraph>
+                            {item.usage}                                
+                        </Typography.Paragraph>
+                        <Typography.Title level={5} style={{ margin: 0 }}>Хадгалах нөхцөл:</Typography.Title>
+                        <Typography.Paragraph>
+                            {item.caution}                                
+                        </Typography.Paragraph>
+                        <Typography.Title level={5} style={{ margin: 0 }}>Анхааруулга:</Typography.Title>
+                        <Typography.Paragraph>
+                            {item.caution}                                
+                        </Typography.Paragraph>
+                    </div>                    
+                </>
+            ) : (
+                <></>
+            )}            
         </div>
     )
 }
 
-export default ProductDetail
+const mapStateToProps = state => {
+    return {
+        token: state.token
+    }
+}
+
+export default connect(mapStateToProps)(ProductDetail)

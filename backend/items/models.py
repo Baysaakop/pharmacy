@@ -39,8 +39,8 @@ class Item(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     category = models.ManyToManyField(Category, null=True, blank=True)
     tag = models.ManyToManyField(Tag, null=True, blank=True)
-    price = models.DecimalField(default=0, max_digits=9, decimal_places=2)  
-    rating = models.DecimalField(default=0, max_digits=3, decimal_places=1)
+    price = models.IntegerField(default=0)  
+    rating = models.IntegerField(default=0)
     image = models.ImageField(upload_to=item_directory_path, null=True, blank=True)    
     total = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -58,12 +58,22 @@ class Favorite(models.Model):
     def __str__(self):
         return self.user.username
 
+class CartItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    count = models.IntegerField(default=1)
+
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ManyToManyField(Item, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)    
+    items = models.ManyToManyField(CartItem, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
+
+# class Order(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     items = models.ManyToManyField(CartItem)
+#     is_payed = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)    
 
 class Post(models.Model):    
     title = models.CharField(max_length=100)
