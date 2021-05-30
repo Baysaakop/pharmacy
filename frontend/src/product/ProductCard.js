@@ -58,8 +58,26 @@ function ProductCard (props) {
                     </div>
                 </Link>
                 <Modal title={props.item.name} visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
-                    <Typography.Title level={5}>Description:</Typography.Title>
-                    <Typography.Paragraph>{props.item.description}</Typography.Paragraph>
+                    <Typography.Title level={5}>Тайлбар:</Typography.Title>
+                    <Typography.Paragraph>
+                        {props.item.description}
+                    </Typography.Paragraph>
+                    <Typography.Title level={5} style={{ margin: 0 }}>Найрлага:</Typography.Title>
+                    <Typography.Paragraph>
+                        {props.item.ingredients}                                
+                    </Typography.Paragraph>
+                    <Typography.Title level={5} style={{ margin: 0 }}>Хэрэглэх заавар:</Typography.Title>
+                    <Typography.Paragraph>
+                        {props.item.usage}                                
+                    </Typography.Paragraph>
+                    <Typography.Title level={5} style={{ margin: 0 }}>Хадгалах нөхцөл:</Typography.Title>
+                    <Typography.Paragraph>
+                        {props.item.caution}                                
+                    </Typography.Paragraph>
+                    <Typography.Title level={5} style={{ margin: 0 }}>Анхааруулга:</Typography.Title>
+                    <Typography.Paragraph>
+                        {props.item.caution}                                
+                    </Typography.Paragraph>
                 </Modal>
             </Card>            
         </div>

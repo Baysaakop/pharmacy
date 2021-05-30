@@ -20,17 +20,17 @@ function CustomLayout (props) {
             <Footer>
                 <div style={{ padding: '40px 10%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <Typography.Text style={{ fontSize: '16px' }}>Shop Name 2021. All Rights Reserved.</Typography.Text>                        
+                        <Typography.Text style={{ fontSize: '16px' }}>Дэлгүүрийн нэр 2021. Зохиогчийн эрх хуулиар хамгаалагдсан.</Typography.Text>                        
                     </div>
                     <div>
-                        <Typography.Text style={{ fontSize: '16px', marginRight: '8px' }}>Follow on Social Media:</Typography.Text>
+                        <Typography.Text style={{ fontSize: '16px', marginRight: '8px' }}>Сошиал орчинд биднийг дагах:</Typography.Text>
                         <Tooltip title="Facebook">
                             <Button type="text" icon={<FacebookFilled />} style={{ marginRight: '8px' }} size="large" /> 
                         </Tooltip>
                         <Tooltip title="Instagram">
                             <Button type="text" icon={<InstagramOutlined />} style={{ marginRight: '8px' }} size="large" /> 
                         </Tooltip>
-                        <Tooltip title="Youtube">
+                        <Tooltip title="YouTube">
                             <Button type="text" icon={<YoutubeFilled />} size="large" /> 
                         </Tooltip>
                     </div>                   

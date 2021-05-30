@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Menu, Badge } from 'antd';
+import { Button, Grid, Menu, Badge, Tooltip } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, EditOutlined, HeartOutlined, MailOutlined, MenuOutlined, QuestionCircleOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
@@ -156,20 +156,28 @@ function CustomMenu (props) {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                         <div style={{ marginRight: '16px' }}>
-                            <Button size="large" type="text" icon={<HeartOutlined />} />
+                            <Tooltip title="Хадгалсан">
+                                <Button size="large" type="text" icon={<HeartOutlined />} />
+                            </Tooltip>
                         </div>                        
                         <div style={{ marginRight: '16px' }}>
                             <Badge count={0} overflowCount={9} size="default" >
-                                <Button size="large" type="text" icon={<ShoppingCartOutlined />} />
+                                <Tooltip title="Сагс">
+                                    <Button size="large" type="text" icon={<ShoppingCartOutlined />} />
+                                </Tooltip>
                             </Badge>
                         </div> 
                         { user ? (
                             <Link to="/profile">
-                                <Button size="large" type="text" style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Button>  
+                                <Tooltip title="Профайл">
+                                    <Button size="large" type="text" style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Button>  
+                                </Tooltip>
                             </Link>
                         ) : (
                             <Link to="/login">
-                                <Button size="large" type="text" icon={<UserOutlined />} />                                                
+                                <Tooltip title="Нэвтрэх">
+                                    <Button size="large" type="text" icon={<UserOutlined />} />                                                
+                                </Tooltip>
                             </Link>  
                         )}                                                                     
                     </div>

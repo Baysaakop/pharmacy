@@ -1,9 +1,9 @@
 import { CarOutlined, HeartOutlined, ShopOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
-import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate, message, Divider, Tag } from "antd";
+import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate, message, Divider, Tag, notification } from "antd";
 import { useEffect, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
-import ProductCard from "./ProductCard";
-import InfiniteCarousel from 'react-leaf-carousel';
+import { Link } from "react-router-dom";
+// import ProductCard from "./ProductCard";
+// import InfiniteCarousel from 'react-leaf-carousel';
 import axios from "axios"; 
 import api from "../api";
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 function ProductDetail (props) {
 
     const [item, setItem] = useState()
+    const [cart, setCart] = useState()
     const [favorite, setFavorite] = useState()
 
     useEffect(() => {
@@ -25,18 +26,32 @@ function ProductDetail (props) {
         if (props.token) {
             getFavorite()
         }
-    }, [props.match.params.id])
+    }, [props.match.params.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function getFavorite () {
         axios({
             method: 'GET',
             url: `${api.favorites}?token=${props.token}`,            
         }).then(res => {        
-            if (res.data.count > 0) {        
-                console.log(res.data.results)        
+            if (res.data.count > 0) {                        
                 setFavorite(res.data.results[0])
             } else {
                 setFavorite(undefined)
+            }
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })     
+    }
+
+    function getCart () {
+        axios({
+            method: 'GET',
+            url: `${api.carts}?token=${props.token}`,            
+        }).then(res => {        
+            if (res.data.count > 0) {                        
+                setCart(res.data.results[0])
+            } else {
+                setCart(undefined)
             }
         }).catch(err => {
             message.error("Хуудсыг дахин ачааллана уу")
@@ -55,7 +70,7 @@ function ProductDetail (props) {
         return res.toString()
     }
 
-    function save () {
+    function addToSaved () {
         if (props.token) {  
             if (favorite) {                
                 axios({
@@ -65,7 +80,20 @@ function ProductDetail (props) {
                         item: item.id,
                         token: props.token
                     }
-                }).then(res => {
+                }).then(res => {                    
+                    if (favorite.item.find(x => x.id === item.id)) {
+                        notification['warning']({
+                            message: 'Жагсаалтаас хасагдлаа.',
+                            description:
+                              `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтаас хасагдлаа.`,
+                        });
+                    } else {
+                        notification['success']({
+                            message: 'Амжилттай хадгаллаа.',
+                            description:
+                              `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
+                        });
+                    }
                     setFavorite(res.data)
                 }).catch(err => {
                     console.log(err)
@@ -78,15 +106,24 @@ function ProductDetail (props) {
                         item: item.id, 
                         token: props.token
                     }
-                }).then(res => {
+                }).then(res => {                    
                     setFavorite(res.data)
+                    notification['success']({
+                        message: 'Амжилттай хадгаллаа.',
+                        description:
+                          `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
+                    });
                 }).catch(err => {
                     console.log(err)
                 })
             }            
         } else {
-            return <Redirect to="/login" />
+            props.history.push('/login')
         }
+    }
+
+    function addToCart() {
+        console.log("Add to Cart")
     }
 
     return (
@@ -145,9 +182,11 @@ function ProductDetail (props) {
                                     <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
                                     <InputNumber defaultValue={1} size="large" min={1} max={100} style={{ marginLeft: '8px' }} />          
                                 </div>                                 
-                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }}>Сагсанд хийх</Button>
+                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }} onClick={addToCart} >
+                                    Сагсанд хийх
+                                </Button>
                                 <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ marginRight: '8px' }}>Захиалах</Button>                                
-                                <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }} onClick={save}>
+                                <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }} onClick={addToSaved}>
                                     { favorite && favorite.item.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
                                 </Button>
                             </div>
