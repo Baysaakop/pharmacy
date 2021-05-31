@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Grid, Menu, Badge, Tooltip, message } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, EditOutlined, HeartOutlined, MailOutlined, MenuOutlined, QuestionCircleOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, EditOutlined, HeartOutlined, MailOutlined, MenuOutlined, QuestionCircleOutlined, SettingOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import * as actions from '../store/actions/auth';
 import axios from 'axios';
@@ -212,11 +212,20 @@ function CustomMenu (props) {
                             </Link>
                         </div> 
                         { user ? (
-                            <Link to="/profile">
-                                <Tooltip title="Профайл">
-                                    <Button size="large" type="text" style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Button>  
-                                </Tooltip>
-                            </Link>
+                            <>
+                                {parseInt(user.profile.role) < 3 ? (
+                                    <Link to="/admin">
+                                        <Tooltip title="Тохиргоо">
+                                            <Button size="large" type="text" icon={<SettingOutlined />} style={{ marginRight: '8px' }} />
+                                        </Tooltip>
+                                    </Link>
+                                ) : (<></>)}
+                                <Link to="/profile">
+                                    <Tooltip title="Профайл">
+                                        <Button size="large" type="text" style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Button>  
+                                    </Tooltip>
+                                </Link>                            
+                            </>
                         ) : (
                             <Link to="/login">
                                 <Tooltip title="Нэвтрэх">

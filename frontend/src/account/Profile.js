@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import api from '../api';
 import AccountDetail from './AccountDetail';
-import { CloseCircleOutlined, HeartOutlined, ScheduleOutlined, ShoppingCartOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, GoldOutlined, HeartOutlined, ScheduleOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import Saved from './Saved';
 import Logout from './Logout';
 import Cart from './Cart';
@@ -66,7 +66,7 @@ function Profile (props) {
                                     <Typography.Text>{user.email}</Typography.Text>
                                 </div>
                             </div>                                                
-                            <Statistic title="Таны хэтэвч" value={5130} suffix="₮" prefix={<WalletOutlined />} />       
+                            <Statistic title="Таны бонус" value={5130} suffix="оноо" prefix={<GoldOutlined />} />       
                             <Menu mode="inline" defaultSelectedKeys={key} style={{ backgroundColor: 'rgba(0, 0, 0, 0)', marginTop: '16px' }} onClick={onSelect}>
                                 <Menu.Item icon={<UserOutlined style={{ fontSize: '18px' }} />} key="1">Хувийн мэдээлэл</Menu.Item>
                                 <Menu.Item icon={<HeartOutlined style={{ fontSize: '18px' }} />} key="2">Хадгалсан</Menu.Item>
