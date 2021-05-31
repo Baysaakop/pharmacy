@@ -130,7 +130,6 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         queryset = Favorite.objects.all()
         token = self.request.query_params.get('token', None)
         if token is not None:
-            print(token)
             user = Token.objects.get(key=token).user   
             queryset = queryset.filter(user=user).distinct()
         return queryset
@@ -141,7 +140,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         favorite = Favorite.objects.create(
             user=user            
         )                      
-        favorite.item.add(item)
+        favorite.items.add(item)
         favorite.save()
         serializer = FavoriteSerializer(favorite)
         headers = self.get_success_headers(serializer.data)        
@@ -150,10 +149,10 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):                         
         favorite = self.get_object()                         
         item = Item.objects.get(id=int(request.data['item']))
-        if item in favorite.item.all():
-            favorite.item.remove(item)
+        if item in favorite.items.all():
+            favorite.items.remove(item)
         else:
-            favorite.item.add(item)        
+            favorite.items.add(item)        
         favorite.save()
         serializer = FavoriteSerializer(favorite)
         headers = self.get_success_headers(serializer.data)        
@@ -166,6 +165,52 @@ class CartItemViewSet(viewsets.ModelViewSet):
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
+
+    def get_queryset(self):
+        queryset = Cart.objects.all()
+        token = self.request.query_params.get('token', None)
+        if token is not None:
+            user = Token.objects.get(key=token).user   
+            queryset = queryset.filter(user=user).distinct()
+        return queryset
+
+    def create(self, request, *args, **kwargs):              
+        user = Token.objects.get(key=request.data['token']).user   
+        item = Item.objects.get(id=int(request.data['item']))
+        count = int(request.data['count'])        
+        cart = Cart.objects.create(
+            user=user            
+        )          
+        cartitem = CartItem.objects.create(
+            item=item,
+            count=count
+        )            
+        cart.items.add(cartitem)
+        cart.save()
+        serializer = CartSerializer(cart)
+        headers = self.get_success_headers(serializer.data)        
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):                         
+        cart = self.get_object()                         
+        item = Item.objects.get(id=int(request.data['item']))
+        count = int(request.data['count'])                
+        is_in = False
+        for ci in cart.items.all():
+            if ci.item == item:
+                ci.count = count      
+                ci.save()                         
+                is_in = True     
+        if is_in == False:
+            cartitem = CartItem.objects.create(
+                item=item,
+                count=count
+            )            
+            cart.items.add(cartitem)                
+        cart.save()
+        serializer = CartSerializer(cart)
+        headers = self.get_success_headers(serializer.data)        
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)     
 
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer

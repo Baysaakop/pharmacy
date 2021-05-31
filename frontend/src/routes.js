@@ -7,16 +7,17 @@ import ItemList from './item/ItemList';
 import ItemDetail from './item/ItemDetail';
 import ItemCreate from './item/ItemCreate';
 import ItemUpdate from './item/ItemUpdate';
-import Logout from './account/Logout';
 import PostCreate from './posts/PostCreate';
 import ProductList from './product/ProductList';
 import ProductDetail from './product/ProductDetail';
 import Admin from './account/Admin';
+import About from './containers/About';
 
 function BaseRouter () {
     return (
         <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/about" component={About} />
             {/* Item urls */}
             <Route exact path="/items" component={ItemList} />
             <Route exact path="/items/:itemID" component={ItemDetail} />
@@ -28,8 +29,7 @@ function BaseRouter () {
             {/* Posts urls */}
             <Route exact path="/newpost" component={PostCreate} />
             {/* User urls */}
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/logout" component={Logout} />           
+            <Route exact path="/login" component={Login} />              
             <Route exact path="/profile" component={Profile} />            
             <Route exact path="/admin" component={Admin} />            
         </Switch>

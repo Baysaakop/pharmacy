@@ -29,13 +29,13 @@ class ItemSerializer(serializers.ModelSerializer):
 
 class FavoriteSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    item = ItemSerializer(read_only=True, many=True)
+    items = ItemSerializer(read_only=True, many=True)
     class Meta:
         model = Favorite
-        fields = ('id', 'user', 'item')
+        fields = ('id', 'user', 'items')
 
 class CartItemSerializer(serializers.ModelSerializer):    
-    item = ItemSerializer(read_only=True, many=True)
+    item = ItemSerializer(read_only=True)
     class Meta:
         model = CartItem
         fields = ('id', 'item', 'count')    

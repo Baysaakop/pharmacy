@@ -53,7 +53,7 @@ class Item(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ManyToManyField(Item, null=True, blank=True)
+    items = models.ManyToManyField(Item, null=True, blank=True)
 
     def __str__(self):
         return self.user.username

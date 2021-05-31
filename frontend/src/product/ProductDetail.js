@@ -13,6 +13,7 @@ function ProductDetail (props) {
     const [item, setItem] = useState()
     const [cart, setCart] = useState()
     const [favorite, setFavorite] = useState()
+    const [count, setCount] = useState(1)
 
     useEffect(() => {
         axios({
@@ -25,6 +26,7 @@ function ProductDetail (props) {
         })        
         if (props.token) {
             getFavorite()
+            getCart()
         }
     }, [props.match.params.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -81,7 +83,7 @@ function ProductDetail (props) {
                         token: props.token
                     }
                 }).then(res => {                    
-                    if (favorite.item.find(x => x.id === item.id)) {
+                    if (favorite.items.find(x => x.id === item.id)) {
                         notification['warning']({
                             message: 'Жагсаалтаас хасагдлаа.',
                             description:
@@ -122,8 +124,48 @@ function ProductDetail (props) {
         }
     }
 
-    function addToCart() {
-        console.log("Add to Cart")
+    function addToCart() {        
+        if (props.token) {  
+            if (cart) {                
+                axios({
+                    method: 'PUT',
+                    url: `${api.carts}/${cart.id}/`,
+                    data: {
+                        item: item.id,
+                        count: count,
+                        token: props.token
+                    }
+                }).then(res => {                                        
+                    setCart(res.data)
+                    notification['success']({
+                        message: 'Сагсанд нэмэгдлээ.',
+                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+                    });
+                }).catch(err => {
+                    console.log(err)
+                })
+            } else {
+                axios({
+                    method: 'POST',
+                    url: `${api.carts}/`,
+                    data: {
+                        item: item.id, 
+                        count: count,
+                        token: props.token
+                    }
+                }).then(res => {                    
+                    setCart(res.data)
+                    notification['success']({
+                        message: 'Сагсанд нэмэгдлээ.',
+                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+                    });
+                }).catch(err => {
+                    console.log(err)
+                })
+            }            
+        } else {
+            props.history.push('/login')
+        }
     }
 
     return (
@@ -180,14 +222,15 @@ function ProductDetail (props) {
                             <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>                                                       
                                 <div style={{ marginRight: '8px' }}>
                                     <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
-                                    <InputNumber defaultValue={1} size="large" min={1} max={100} style={{ marginLeft: '8px' }} />          
+                                    <InputNumber value={count} size="large" min={1} max={100} style={{ marginLeft: '8px' }} onChange={(val) => setCount(val)} />          
                                 </div>                                 
-                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }} onClick={addToCart} >
+                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }} onClick={addToCart} >                                    
+                                    {/* { cart && cart.items.find(x => x.item.id === item.id) ? `(${cart.items.find(x => x.item.id === item.id).count}) Сагсанд нэмэх` : 'Сагсанд хийх' } */}
                                     Сагсанд хийх
                                 </Button>
                                 <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ marginRight: '8px' }}>Захиалах</Button>                                
                                 <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }} onClick={addToSaved}>
-                                    { favorite && favorite.item.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
+                                    { favorite && favorite.items.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
                                 </Button>
                             </div>
                             <Divider style={{ margin: '16px 0' }} />
