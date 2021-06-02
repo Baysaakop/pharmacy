@@ -7,6 +7,7 @@ const api = {
     categories: baseUrl + 'api/items/categories',
     tags: baseUrl + 'api/items/tags',
     favorites: baseUrl + 'api/items/favorites',
+    cartitems: baseUrl + 'api/items/cartitems',
     carts: baseUrl + 'api/items/carts',
     users: baseUrl + 'api/users',
     authFacebook: baseUrl + 'rest-auth/facebook/',
