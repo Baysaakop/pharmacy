@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from .models import Company, Category, Tag, Item, Favorite, CartItem, Cart, Post
+from .models import Company, Category, Tag, Shop, Item, ItemImage, Favorite, CartItem, Cart, Post
 from users.serializers import UserSerializer
+from addresses.serializers import AddressSerializer
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,16 +17,29 @@ class CategorySerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'description')       
+        fields = ('id', 'name', 'description')      
+
+class ShopSerializer(serializers.ModelSerializer):
+    address = AddressSerializer(read_only=True)
+    class Meta:
+        model = Shop
+        fields = ('id', 'name', 'phone_number', 'address', 'image')       
+
+
+class ItemImageSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = ItemImage
+        fields = ('id', 'image') 
 
 class ItemSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
     category = CategorySerializer(read_only=True, many=True)
     tag = TagSerializer(read_only=True, many=True)
+    images = ItemImageSerializer(read_only=True, many=True)
     class Meta:
         model = Item
         fields = ('id', 'name', 'description', 'ingredients', 'usage', 'caution',
-        'company', 'category', 'tag', 'price', 'rating', 'image', 'total', 'created_by', 'updated_by', 'created_at', 'updated_at')        
+        'company', 'category', 'tag', 'price', 'rating', 'total', 'images', 'created_by', 'updated_by', 'created_at', 'updated_at')           
 
 class FavoriteSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

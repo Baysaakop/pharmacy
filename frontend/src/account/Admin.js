@@ -12,6 +12,7 @@ import CompanyAdd from "../company/CompanyAdd";
 import CompanyEdit from "../company/CompanyEdit";
 import ProductAdd from "../product/ProductAdd";
 import ProductEdit from "../product/ProductEdit";
+import ShopAdd from "../shop/ShopAdd";
 
 function Admin (props) {
     const [user, setUser] = useState()
@@ -96,7 +97,17 @@ function Admin (props) {
                             </Tabs.TabPane>
                         </Tabs>
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="Мэдээ" key="5">
+                    <Tabs.TabPane tab="Салбар" key="5">
+                        <Tabs defaultActiveKey="1">
+                            <Tabs.TabPane tab="Нэмэх" key="1">
+                                <ShopAdd token={props.token} />
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Засах / Хасах" key="2">
+                                
+                            </Tabs.TabPane>
+                        </Tabs>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Мэдээ" key="6">
                         Мэдээ
                     </Tabs.TabPane>
                 </Tabs>

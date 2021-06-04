@@ -165,7 +165,7 @@ function ProductCard (props) {
                 style={{ width: '100%' }}
                 cover={
                     <Link to={`/products/${props.item.id}`}>
-                        <img alt={props.item.name} src={props.item.image} style={{ width: '100%', height: 'auto' }} />
+                        <img alt={props.item.name} src={props.item.images[0].image} style={{ width: '100%', height: 'auto' }} />
                     </Link>
                 }                
                 actions={ props.action ? [

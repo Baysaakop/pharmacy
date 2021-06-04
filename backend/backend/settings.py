@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'djrichtextfield',
     'storages',
     'users',
-    'items'
+    'items',
+    'addresses'
 ]
 
 SITE_ID = 2

@@ -15,5 +15,6 @@ urlpatterns = [
     path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),    
     path('api/items/', include('items.urls')),
     path('api/users/', include('users.urls')),   
+    path('api/address/', include('addresses.urls')),   
     path('djrichtextfield/', include('djrichtextfield.urls'))    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

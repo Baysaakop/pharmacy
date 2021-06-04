@@ -1,5 +1,5 @@
 import { CarOutlined, HeartOutlined, ShopOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
-import { Typography, Breadcrumb, Row, Col, Button, InputNumber, Rate, message, Divider, Tag, notification } from "antd";
+import { Typography, Breadcrumb, Row, Col, Button, InputNumber, message, Divider, Tag, notification } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // import ProductCard from "./ProductCard";
@@ -31,33 +31,37 @@ function ProductDetail (props) {
     }, [props.match.params.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function getFavorite () {
-        axios({
-            method: 'GET',
-            url: `${api.favorites}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                        
-                setFavorite(res.data.results[0])
-            } else {
-                setFavorite(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
+        if (props.token) {
+            axios({
+                method: 'GET',
+                url: `${api.favorites}?token=${props.token}`,            
+            }).then(res => {        
+                if (res.data.count > 0) {                        
+                    setFavorite(res.data.results[0])
+                } else {
+                    setFavorite(undefined)
+                }
+            }).catch(err => {
+                message.error("Хуудсыг дахин ачааллана уу")
+            })     
+        }
     }
 
     function getCart () {
-        axios({
-            method: 'GET',
-            url: `${api.carts}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                        
-                setCart(res.data.results[0])
-            } else {
-                setCart(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
+        if (props.token) {
+            axios({
+                method: 'GET',
+                url: `${api.carts}?token=${props.token}`,            
+            }).then(res => {        
+                if (res.data.count > 0) {                        
+                    setCart(res.data.results[0])
+                } else {
+                    setCart(undefined)
+                }
+            }).catch(err => {
+                message.error("Хуудсыг дахин ачааллана уу")
+            })     
+        }
     }
 
     function formatNumber(num) {
@@ -180,7 +184,7 @@ function ProductDetail (props) {
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
                             <Link to="/products">
-                                Бүтээгдэхүүн
+                                Эмийн сан
                             </Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>                   
@@ -189,8 +193,8 @@ function ProductDetail (props) {
                     </Breadcrumb>
                     <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
                         <Col span={8} style={{ padding: 0 }}>
-                            <div style={{ border: '1px solid #dedede', width: '100%', padding: '32px' }}>
-                                <img alt={item.name} src={item.image} style={{ width: '100%', height: 'auto' }} />
+                            <div style={{ width: '100%', padding: '32px' }}>
+                                <img alt={item.name} src={item.images[0].image} style={{ width: '100%', height: 'auto' }} />
                             </div>
                         </Col>
                         <Col span={16} style={{ padding: '0 0 0 32px' }}>
@@ -200,8 +204,8 @@ function ProductDetail (props) {
                                     <Typography.Text type="secondary" style={{ fontSize: '16px' }}>{getCategory(item.category)}</Typography.Text>
                                 </div>
                                 <div>
-                                    {/* <Typography.Title level={3}>{item.company.image}</Typography.Title> */}
-                                    <img alt={item.company} src={item.company.image} style={{ height: '40px', width: 'auto', objectFit: 'scale-down' }} />
+                                    <Typography.Title level={3}>{item.company.name}</Typography.Title>
+                                    {/* <img alt={item.company} src={item.company.image} style={{ height: '40px', width: 'auto', objectFit: 'scale-down' }} /> */}
                                 </div>
                             </div>                            
                             <Divider style={{ margin: '16px 0' }} />
@@ -211,11 +215,11 @@ function ProductDetail (props) {
                                     <Typography.Title level={2} style={{ margin: '0' }}>{formatNumber(item.price)}₮</Typography.Title>
                                 </div>                                
                                 <div>                                                                        
-                                    <Typography.Title level={5} style={{ margin: '0' }}>Үнэлгээ:</Typography.Title>
+                                    {/* <Typography.Title level={5} style={{ margin: '0' }}>Үнэлгээ:</Typography.Title>
                                     <div>
                                         <Rate allowHalf value={item.rating / 10}/>
                                         <span className="ant-rate-text" style={{ fontWeight: 'bold' }}>- {item.rating / 10}</span>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>                            
                             <Divider style={{ margin: '16px 0' }} />                                                                                                                                                                  
@@ -232,6 +236,7 @@ function ProductDetail (props) {
                                 <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }} onClick={addToSaved}>
                                     { favorite && favorite.items.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
                                 </Button>
+                                <Button type="ghost" size="large" icon={<ShopOutlined />} style={{ marginRight: '8px' }}>Зарагдаж буй салбарууд</Button>
                             </div>
                             <Divider style={{ margin: '16px 0' }} />
                             {item.tag.map(tag => {
@@ -239,28 +244,14 @@ function ProductDetail (props) {
                                     <Tag>{tag.name}</Tag>
                                 )                                
                             })}
-                            <Row gutter={[8, 8]} style={{ marginTop: '16px' }}>
-                                <Col span={12}>
-                                    <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px' }}>
-                                        <div>
-                                            <CarOutlined style={{ fontSize: '24px' }} />
-                                        </div>
-                                        <div style={{ marginLeft: '16px' }}>
-                                            <Typography.Text>Бүтээгдэхүүнээ захиалаад 24-48 цагийн дотор хүргэлтээр авах боломжтой.</Typography.Text>
-                                        </div>
-                                    </div>
-                                </Col>
-                                <Col span={12}>
-                                    <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px' }}>
-                                        <div>
-                                            <ShopOutlined style={{ fontSize: '24px' }} />
-                                        </div>
-                                        <div style={{ marginLeft: '16px' }}>
-                                            <Typography.Text>Бүтээгдэхүүнээ захиалаад өөрт ойр байрлах салбар дээрээс очиж авах боломжтой.</Typography.Text>
-                                        </div>
-                                    </div>
-                                </Col>
-                            </Row>
+                            <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px' }}>
+                                <div>
+                                    <CarOutlined style={{ fontSize: '24px' }} />
+                                </div>
+                                <div style={{ marginLeft: '16px' }}>
+                                    <Typography.Text>Таны 14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text>
+                                </div>
+                            </div>
                         </Col>
                     </Row>
                     <div style={{ marginTop: '24px' }}>

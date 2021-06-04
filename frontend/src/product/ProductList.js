@@ -1,4 +1,4 @@
-import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag } from "antd";
+import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag, Radio, Space } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
@@ -9,12 +9,14 @@ const { CheckableTag } = Tag
 
 function ProductList (props) {
 
+    const [categories, setCategories] = useState([])
     const [selectedTags, setSelectedTags] = useState([])
     const [tags, setTags] = useState([])
     const [items, setItems] = useState()
 
     useEffect(() => {
         getProducts()
+        getCategories()
         getTags()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -23,7 +25,19 @@ function ProductList (props) {
             method: 'GET',
             url: `${api.items}/`,            
         }).then(res => {            
+            console.log(res.data.results)
             setItems(res.data.results)
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })
+    }
+
+    function getCategories () {
+        axios({
+            method: 'GET',
+            url: `${api.categories}/`            
+        }).then(res => {            
+            setCategories(res.data.results)
         }).catch(err => {
             message.error("Хуудсыг дахин ачааллана уу")
         })
@@ -54,7 +68,7 @@ function ProductList (props) {
                     </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                    Бүтээгдэхүүн
+                    Эмийн сан
                 </Breadcrumb.Item>
             </Breadcrumb>
             <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
@@ -62,7 +76,15 @@ function ProductList (props) {
                     <div style={{ width: '100%', border: '1px solid #f0f0f0', padding: '16px' }}>
                         <Typography.Title level={5}>Нэрээр хайх:</Typography.Title>
                         <Input />
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Төрөл:</Typography.Title>
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Ангилал:</Typography.Title>
+                        <Radio.Group>
+                            <Space direction="vertical">
+                                {categories ? categories.map(cat => (
+                                    <Radio value={cat.id}>{cat.name}</Radio>
+                                )) : <></>}
+                            </Space>
+                        </Radio.Group>
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Tags:</Typography.Title>
                         {tags ? tags.map(tag => (
                             <CheckableTag
                                 key={tag.id}
@@ -72,8 +94,7 @@ function ProductList (props) {
                                 {tag.name}
                             </CheckableTag>
                         )) : <></>}
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Үйлдвэрлэгч:</Typography.Title>
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Үнэ:</Typography.Title>
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Үйлдвэрлэгч:</Typography.Title>                        
                     </div>                    
                 </Col>
                 <Col span={18} style={{ padding: 0 }}>

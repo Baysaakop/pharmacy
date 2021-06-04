@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Menu, Badge, Tooltip, message } from 'antd';
+import { Button, Grid, Menu, Badge, Tooltip, message, Tag, Avatar, Typography } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, EditOutlined, HeartOutlined, MailOutlined, MenuOutlined, QuestionCircleOutlined, SettingOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import * as actions from '../store/actions/auth';
 import axios from 'axios';
 import api from '../api';
 import './Menu.css'
+import logo from './logo.png';
 
 const { SubMenu, Item } = Menu;
 const { useBreakpoint } = Grid;
@@ -35,7 +36,7 @@ const styleMenuWeb = {
 }
 
 const styleMenuItem = {
-    fontSize: '18px'    
+    fontSize: '16px'    
 }
 
 function CustomMenu (props) {    
@@ -167,9 +168,14 @@ function CustomMenu (props) {
                 <div style={styleHeaderWeb}>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
                         <Link to="/">
-                            <div style={{ color: '#000', fontSize: '28px', fontWeight: 'bold', marginRight: '24px' }}>                        
-                                ЛОГО                        
-                            </div>        
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginRight: '16px' }}>
+                                <div>
+                                    <Avatar size={48} src={logo} style={{ marginBottom: '4px', marginRight: '2px' }} />                            
+                                </div>
+                                <div>
+                                    <Typography.Text style={{ fontWeight: 'bold', fontSize: '24px' }}>Ирмүүн аз</Typography.Text>
+                                </div>
+                            </div>                                                        
                         </Link>
                         <Menu 
                             theme="light"
@@ -182,13 +188,21 @@ function CustomMenu (props) {
                                 <Link to="/about">Бидний тухай</Link>
                             </Menu.Item>             
                             <Menu.Item key="products" style={styleMenuItem} >
-                                <Link to="/products">Бүтээгдэхүүн</Link>
+                                <Link to="/products">Эмийн сан</Link>
                             </Menu.Item>
                             <Menu.Item key="help" style={styleMenuItem} >
                                 <Link to="/help">Мэдээлэл</Link>
                             </Menu.Item>
                             <Menu.Item key="contact" style={styleMenuItem}>
                                 <Link to="/contact">Холбоо барих</Link>
+                            </Menu.Item>  
+                            <Menu.Item key="brandproducts" style={styleMenuItem}>
+                                <Link to="/brandproducts">
+                                    <Tag color="#e84118" style={{ fontSize: '16px', padding: '8px' }}>
+                                    {/* БРЭНД БҮТЭЭГДЭХҮҮН */}
+                                    Брэнд бүтээгдэхүүн
+                                    </Tag>
+                                </Link>
                             </Menu.Item>                                                                      
                         </Menu>
                     </div>

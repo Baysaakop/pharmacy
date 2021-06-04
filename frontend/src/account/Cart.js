@@ -107,7 +107,7 @@ function Cart (props) {
                             <img
                                 width={100}
                                 alt="logo"
-                                src={item.item.image}
+                                src={item.item.images[0].image}
                             />
                         }
                     >
