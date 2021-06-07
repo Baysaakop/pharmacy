@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import City, District, Section, Address
+from .models import City, District, Address
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,14 +12,9 @@ class DistrictSerializer(serializers.ModelSerializer):
         model = District
         fields = ('id', 'name', 'city')  
 
-class SectionSerializer(serializers.ModelSerializer):
+class AddressSerializer(serializers.ModelSerializer):
+    city = CitySerializer(read_only=True)
     district = DistrictSerializer(read_only=True)
     class Meta:
-        model = Section
-        fields = ('id', 'name', 'district')  
-
-class AddressSerializer(serializers.ModelSerializer):
-    section = SectionSerializer(read_only=True)
-    class Meta:
         model = Address
-        fields = ('id', 'section', 'address')  
+        fields = ('id', 'city', 'district', 'section', 'address')  

@@ -1,6 +1,5 @@
-from django.db.models import query
-from .models import City, District, Section, Address
-from .serializers import CitySerializer, DistrictSerializer, SectionSerializer, AddressSerializer
+from .models import City, District, Address
+from .serializers import CitySerializer, DistrictSerializer, AddressSerializer
 from rest_framework import viewsets
 
 class CityViewSet(viewsets.ModelViewSet):
@@ -16,17 +15,6 @@ class DistrictViewSet(viewsets.ModelViewSet):
         city = self.request.query_params.get('city', None)
         if city is not None:
             queryset = queryset.filter(city__id=int(city)).distinct()
-        return queryset
-
-class SectionViewSet(viewsets.ModelViewSet):
-    serializer_class = SectionSerializer
-    queryset = Section.objects.all()
-
-    def get_queryset(self):
-        queryset = Section.objects.all()
-        district = self.request.query_params.get('district', None)
-        if district is not None:
-            queryset = queryset.filter(district__id=int(district)).distinct()
         return queryset
 
 class AddressViewSet(viewsets.ModelViewSet):

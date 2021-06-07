@@ -9,30 +9,31 @@ function ShopAdd (props) {
 
     const [form] = Form.useForm()
     const [cities, setCities] = useState()
-    const [districts, setDistricts] = useState()
-    const [sections, setSections] = useState()
-    const [city, setCity] = useState()
-    const [district, setDistrict] = useState()
-    const [section, setSection] = useState()
+    const [districts, setDistricts] = useState()    
+    const [city, setCity] = useState("1")
+    const [district, setDistrict] = useState()    
     const [image, setImage] = useState()
 
     useEffect(() => {
-        getCities()    
-    }, [])
+        if (!cities) {
+            getCities()    
+        } 
+        getDisctricts()
+    }, [city])
 
     function getCities () {
         axios({
             method: 'GET',
             url: `${api.cities}/`,            
         }).then(res => {
-            setCities(res.data.results)
+            setCities(res.data.results)            
         }).catch(err => {
             console.log(err.message)
         })
     }
 
-    function getDisctricts (target) {
-        let url = `${api.districts}?city=${parseInt(target)}`
+    function getDisctricts () {
+        let url = city ? `${api.districts}?city=${parseInt(city)}` : `${api.districts}/`
         axios({
             method: 'GET',
             url: url,    
@@ -43,32 +44,12 @@ function ShopAdd (props) {
         })
     }
 
-    function getSections (target) {
-        let url = `${api.sections}?district=${parseInt(target)}`
-        axios({
-            method: 'GET',
-            url: url,    
-        }).then(res => {
-            setSections(res.data.results)
-        }).catch(err => {
-            console.log(err.message)
-        })
+    function onSelectCity(id) {        
+        setCity(id)        
     }
 
-    function onSelectCity(id) {
-        let target = cities.find(x => x.id === parseInt(id))        
-        getDisctricts(id)
-        setCity(target)
-    }
-
-    function onSelectDistrict(id) {
-        let target = districts.find(x => x.id === parseInt(id))
-        getSections(id)
-        setDistrict(target)        
-    }
-
-    function onSelectSection(id) {
-        setSection(sections.find(x => x.id === parseInt(id)))
+    function onSelectDistrict(id) {        
+        setDistrict(id)        
     }
 
     const onImageSelected = (path) => {
@@ -112,7 +93,8 @@ function ShopAdd (props) {
                 form={form} 
                 layout="vertical" 
                 onFinish={onFinish}
-                style={{ marginTop: '16px', border: '1px solid #dedede', padding: '16px', width: '800px' }}                
+                style={{ marginTop: '16px', border: '1px solid #dedede', padding: '16px', width: '800px' }}            
+                initialValues={{ 'city': city }}    
             >
                 <Row gutter={[8, 8]}>
                     <Col span={12}>
@@ -123,7 +105,7 @@ function ShopAdd (props) {
                             <Input />
                         </Form.Item>
                         <Form.Item name="image" label="Зураг">
-                            <ImageUpload image={image} onImageSelected={onImageSelected} height="200px" width="300px" />     
+                            <ImageUpload image={image} onImageSelected={onImageSelected} height="228px" width="376px" />     
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -149,24 +131,11 @@ function ShopAdd (props) {
                                 )) : <></> }
                             </Select>          
                         </Form.Item>                        
-                        <Form.Item name="section" label="Хаяг (Хороо)"  rules={[{ required: true }]}>
-                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                                <Select                                
-                                    placeholder="Хороо сонгох"
-                                    optionFilterProp="children"
-                                    onSelect={onSelectSection}
-                                >
-                                    { sections ? sections.map(section => (
-                                        <Select.Option key={section.id}>{section.name}</Select.Option>
-                                    )) : <></> }
-                                </Select>       
-                                <Tooltip title="Хороо нэмэх">
-                                    <Button type="primary" icon={<PlusOutlined />} style={{ marginLeft: '8px' }} />                        
-                                </Tooltip>
-                            </div>
+                        <Form.Item name="section" label="Хаяг (Хороо)">
+                            <Input />
                         </Form.Item>                            
-                        <Form.Item name="address" label="Хаяг " rules={[{ required: true }]}>
-                            <Input.TextArea rows={4} />
+                        <Form.Item name="address" label="Хаяг" rules={[{ required: true }]}>
+                            <Input.TextArea rows={6} />
                         </Form.Item>
                     </Col>
                 </Row>

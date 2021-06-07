@@ -172,6 +172,50 @@ function ProductDetail (props) {
         }
     }
 
+    function order() {        
+        if (props.token) {  
+            if (cart) {                
+                axios({
+                    method: 'PUT',
+                    url: `${api.carts}/${cart.id}/`,
+                    data: {
+                        item: item.id,
+                        count: count,
+                        token: props.token
+                    }
+                }).then(res => {                                        
+                    setCart(res.data)
+                    notification['success']({
+                        message: 'Сагсанд нэмэгдлээ.',
+                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+                    });
+                }).catch(err => {
+                    console.log(err)
+                })
+            } else {
+                axios({
+                    method: 'POST',
+                    url: `${api.carts}/`,
+                    data: {
+                        item: item.id, 
+                        count: count,
+                        token: props.token
+                    }
+                }).then(res => {                    
+                    setCart(res.data)
+                    notification['success']({
+                        message: 'Сагсанд нэмэгдлээ.',
+                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+                    });
+                }).catch(err => {
+                    console.log(err)
+                })
+            }            
+        } else {
+            props.history.push('/login')
+        }
+    }
+
     return (
         <div style={{ padding: '0px 10%' }}>    
             {item ? (
@@ -222,22 +266,19 @@ function ProductDetail (props) {
                                     </div> */}
                                 </div>
                             </div>                            
-                            <Divider style={{ margin: '16px 0' }} />                                                                                                                                                                  
-                            <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>                                                       
-                                <div style={{ marginRight: '8px' }}>
-                                    <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
-                                    <InputNumber value={count} size="large" min={1} max={100} style={{ marginLeft: '8px' }} onChange={(val) => setCount(val)} />          
-                                </div>                                 
-                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ marginRight: '8px' }} onClick={addToCart} >                                    
-                                    {/* { cart && cart.items.find(x => x.item.id === item.id) ? `(${cart.items.find(x => x.item.id === item.id).count}) Сагсанд нэмэх` : 'Сагсанд хийх' } */}
-                                    Сагсанд хийх
-                                </Button>
-                                <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ marginRight: '8px' }}>Захиалах</Button>                                
-                                <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ marginRight: '8px' }} onClick={addToSaved}>
-                                    { favorite && favorite.items.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
-                                </Button>
-                                <Button type="ghost" size="large" icon={<ShopOutlined />} style={{ marginRight: '8px' }}>Зарагдаж буй салбарууд</Button>
-                            </div>
+                            <Divider style={{ margin: '16px 0' }} />                                                                                                                                                                                                                          
+                            <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
+                            <InputNumber value={count} size="large" min={1} max={100} style={{ margin: '0 8px 8px 8px' }} onChange={(val) => setCount(val)} />                                                                       
+                            <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={addToCart} >                                    
+                                { cart && cart.items.find(x => x.item.id === item.id) ? `Сагсанд байгаа (${cart.items.find(x => x.item.id === item.id).count} ш)` : 'Сагсанд хийх' }                                                              
+                            </Button>
+                            <Link to="/profile?key=cart">
+                                <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ margin: '0 8px 8px 0' }}>Захиалах</Button>                                
+                            </Link>
+                            <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={addToSaved}>
+                                { favorite && favorite.items.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
+                            </Button>
+                            <Button type="ghost" size="large" icon={<ShopOutlined />} style={{ margin: '0 8px 8px 0' }}>Зарагдаж буй салбарууд</Button>                            
                             <Divider style={{ margin: '16px 0' }} />
                             {item.tag.map(tag => {
                                 return (
