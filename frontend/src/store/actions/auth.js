@@ -31,15 +31,17 @@ export const logout = () => {
     };
 }
 
-export const authFacebook = (access_token) => {
-    return dispatch => {
-        console.log(access_token)
+export const authFacebook = (access_token, email, name, picture) => {
+    return dispatch => {        
         dispatch(authStart());
         axios({
             method: 'POST',
             url: api.authFacebook,
             data: {
-                access_token: access_token
+                access_token: access_token,
+                email: email,
+                name: name,
+                picture: picture
             }
         })     
         .then(res => {                 

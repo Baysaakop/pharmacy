@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Popconfirm, Button, message, Row, Col, DatePicker, Typography, Divider } from 'antd';
-import { UserOutlined, MobileOutlined, MailOutlined, CheckOutlined } from '@ant-design/icons';
+import { UserOutlined, MobileOutlined, MailOutlined, CheckOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import api from '../api';
 import moment from 'moment';
@@ -13,10 +13,10 @@ function AccountDetail (props) {
         if (values.username) {
             formData.append('username', values.username)
         } 
-        if (values.first_name) {
+        if (values.last_name) {
             formData.append('last_name', values.last_name);        
         }               
-        if (values.last_name) {
+        if (values.first_name) {
             formData.append('first_name', values.first_name);        
         }        
         if (values.phone_number) { 
@@ -28,7 +28,7 @@ function AccountDetail (props) {
         }                
         axios({
             method: 'PUT',
-            url: `${api.users}/${props.user.id}/`,
+            url: `${api.profiles}/${props.user.profile.id}/`,
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': props.token                          
@@ -37,13 +37,27 @@ function AccountDetail (props) {
         })            
         .then(res => {
             if (res.status === 200 || res.status === 201) {
-                message.info("Saved successfully.")   
+                message.info("Хадгаллаа.")   
             }                                                         
         })
         .catch(err => {                      
-            console.log(err.message)      
-            message.error("Error has occured. Please try again later.")
+            console.log(err.message)         
+            message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
         })          
+    }
+
+    function getAddress (address) {
+        if (!address || address == null) {
+            return ""
+        }
+        let result = address.city.name + ", " + address.district.name + " дүүрэг"
+        if (address.section) {
+            result = result + ", " + address.section + "-р хороо"
+        }
+        if (address.address) {
+            result = result + ", " + address.address
+        }        
+        return result
     }
 
     return (
@@ -83,19 +97,26 @@ function AccountDetail (props) {
                         <Form.Item name="birth_date" label="Төрсөн өдөр:">
                             <DatePicker style={{ width: '100%' }} defaultValue={props.user.profile.birth_date ? moment(props.user.profile.birth_date, "YYYY-MM-DD") : undefined} />
                         </Form.Item> 
+                    </Col>                    
+                    <Col span={24}>
+                        <Form.Item name="address" label="Хаяг:">                            
+                            <Input 
+                                disabled
+                                prefix={<EnvironmentOutlined style={{ color: '#a1a1a1' }} />} 
+                                suffix={<Button type="primary">Засах</Button>}
+                                defaultValue={getAddress(props.user.profile.address)}                                 
+                            />                            
+                        </Form.Item>  
                     </Col>
                 </Row>                                                                                                       
-                {/* <Form.Item name="role" label="Role:">
-                    <Input prefix={<LockOutlined style={{ color: '#a1a1a1' }} />} disabled defaultValue={props.user.profile.role === "1" ? "Admin" : props.user.profile.role === "2" ? "Moderator" : "User"} />
-                </Form.Item> */}
                 <Form.Item>                                                                  
-                    <Popconfirm title="Are you sure to update your account？" okText="Yes" cancelText="No" onConfirm={form.submit}>
+                    <Popconfirm title="Хадгалах уу？" okText="Тийм" cancelText="Үгүй" onConfirm={form.submit}>
                         <Button type="primary" icon={<CheckOutlined />} >
                             Хадгалах
                         </Button>
                     </Popconfirm>                                                                                                            
                 </Form.Item>         
-            </Form>
+            </Form>                   
         </div>
     )
 };

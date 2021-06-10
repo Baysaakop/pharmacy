@@ -33,7 +33,8 @@ function Profile (props) {
                 'Content-Type': 'application/json',
                 'Authorization': `Token ${props.token}`
             }
-        }).then(res => {            
+        }).then(res => {           
+            console.log(res.data) 
             setUser(res.data)
         }).catch(err => {
             console.log(err)

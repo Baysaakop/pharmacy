@@ -44,16 +44,12 @@ function CustomMenu (props) {
     const [current, setCurrent] = useState('home')
     const [collapsed, setCollapsed] = useState(true)
     const [user, setUser] = useState()
-    const [favorite, setFavorite] = useState()
-    const [cart, setCart] = useState()
 
     useEffect(() => {
         const menuItem = props.location.pathname.toString().split('/')[1]
         setCurrent(menuItem === '' ? 'home' : menuItem)
         if (props.token && props.token !== null && !user) {
             getUser()
-            getFavorite()
-            getCart()
         }
     }, [props.location, props.token]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -66,41 +62,12 @@ function CustomMenu (props) {
                 'Authorization': `Token ${props.token}`
             }
         }).then(res => {                    
+            console.log(res.data)
             setUser(res.data)
         }).catch(err => {
             console.log(err.message)
         })
-    }
-
-    function getFavorite () {
-        axios({
-            method: 'GET',
-            url: `${api.favorites}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                        
-                setFavorite(res.data.results[0])
-            } else {
-                setFavorite(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
-    }
-
-    function getCart () {
-        axios({
-            method: 'GET',
-            url: `${api.carts}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                  
-                setCart(res.data.results[0])
-            } else {
-                setCart(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
-    }
+    }    
 
     const handleMenuClick = (e) => {               
         setCurrent(e.key);
@@ -209,7 +176,7 @@ function CustomMenu (props) {
                     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                         <div style={{ marginRight: '16px' }}>
                             <Link to="/profile?key=saved">
-                                <Badge count={favorite ? favorite.items.length : 0} overflowCount={9} size="default" >
+                                <Badge count={user && user.profile.favorite.length ? user.profile.favorite.length : 0} overflowCount={9} size="default" >
                                     <Tooltip title="Хадгалсан">
                                         <Button size="large" type="text" icon={<HeartOutlined />} />
                                     </Tooltip>
@@ -218,7 +185,7 @@ function CustomMenu (props) {
                         </div>                        
                         <div style={{ marginRight: '16px' }}>
                             <Link to="/profile?key=cart">
-                                <Badge count={cart ? cart.items.length : 0} overflowCount={9} size="default" >
+                                <Badge count={user && user.profile.cart.length ? user.profile.cart.length : 0} overflowCount={9} size="default" >
                                     <Tooltip title="Сагс">
                                         <Button size="large" type="text" icon={<ShoppingCartOutlined />} />
                                     </Tooltip>

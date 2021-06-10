@@ -6,10 +6,7 @@ const api = {
     companies: baseUrl + 'api/items/companies',
     categories: baseUrl + 'api/items/categories',
     tags: baseUrl + 'api/items/tags',
-    shops: baseUrl + 'api/items/shops',
-    favorites: baseUrl + 'api/items/favorites',
-    cartitems: baseUrl + 'api/items/cartitems',
-    carts: baseUrl + 'api/items/carts',
+    shops: baseUrl + 'api/items/shops',    
     users: baseUrl + 'api/users',
     authFacebook: baseUrl + 'rest-auth/facebook/',
     authGoogle: baseUrl + 'rest-auth/google/',
@@ -17,6 +14,7 @@ const api = {
     districts: baseUrl + 'api/address/districts',    
     addresses: baseUrl + 'api/address/addresses',
     profile: baseUrl + 'rest-auth/user/',
+    profiles: baseUrl + 'api/users/profiles',
     ckeditor: baseUrl + 'ckeditor/',
 }
 

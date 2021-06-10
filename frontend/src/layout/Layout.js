@@ -20,10 +20,11 @@ function CustomLayout (props) {
             <Footer>
                 <div style={{ padding: '40px 10%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <Typography.Text style={{ fontSize: '16px' }}>Дэлгүүрийн нэр 2021. Зохиогчийн эрх хуулиар хамгаалагдсан.</Typography.Text>                        
+                        <Typography.Text style={{ fontSize: '16px', fontWeight: 'bold' }}>Ирмүүн Аз 2021. </Typography.Text>
+                        <Typography.Text style={{ fontSize: '16px' }}>Зохиогчийн эрх хуулиар хамгаалагдсан.</Typography.Text>                        
                     </div>
                     <div>
-                        <Typography.Text style={{ fontSize: '16px', marginRight: '8px' }}>Сошиал орчинд биднийг дагах:</Typography.Text>
+                        <Typography.Text style={{ fontSize: '16px', marginRight: '8px' }}>Сошиал сувгууд:</Typography.Text>
                         <Tooltip title="Facebook">
                             <Button type="text" icon={<FacebookFilled />} style={{ marginRight: '8px' }} size="large" /> 
                         </Tooltip>

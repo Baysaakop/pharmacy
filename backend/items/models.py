@@ -68,30 +68,6 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
-class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Item, null=True, blank=True)
-
-    def __str__(self):
-        return self.user.username
-
-class CartItem(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    count = models.IntegerField(default=1)
-
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)    
-    items = models.ManyToManyField(CartItem, null=True, blank=True)
-
-    def __str__(self):
-        return self.user.username
-
-# class Order(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     items = models.ManyToManyField(CartItem)
-#     is_payed = models.BooleanField(default=False)
-#     created_at = models.DateTimeField(auto_now_add=True)    
-
 class Post(models.Model):    
     title = models.CharField(max_length=100)
     content = RichTextField()

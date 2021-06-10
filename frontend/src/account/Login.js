@@ -24,7 +24,8 @@ const Login = (props) => {
     }
 
     function authFacebook (response) {
-        props.onAuthFacebook(response.accessToken)
+        console.log(response)
+        props.onAuthFacebook(response.accessToken, response.email, response.name, response.picture.data.url)
     }
 
     // function authGoogle (response) {
