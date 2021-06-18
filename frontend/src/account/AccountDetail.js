@@ -1,12 +1,14 @@
-import React from 'react';
-import { Form, Input, Popconfirm, Button, message, Row, Col, DatePicker, Typography, Divider } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Popconfirm, Button, message, Row, Col, DatePicker, Typography, Divider, Modal } from 'antd';
 import { UserOutlined, MobileOutlined, MailOutlined, CheckOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import api from '../api';
 import moment from 'moment';
+import AddressForm from './AddressForm';
 
 function AccountDetail (props) {
-    const [form] = Form.useForm();    
+    const [form] = Form.useForm()
+    const [visible, setVisible] = useState(false)
 
     function onFinish (values) {                          
         var formData = new FormData();
@@ -100,15 +102,24 @@ function AccountDetail (props) {
                     </Col>                    
                     <Col span={24}>
                         <Form.Item name="address" label="Хаяг:">                            
-                            <Input 
+                            <Input                                 
                                 disabled
                                 prefix={<EnvironmentOutlined style={{ color: '#a1a1a1' }} />} 
-                                suffix={<Button type="primary">Засах</Button>}
-                                defaultValue={getAddress(props.user.profile.address)}                                 
+                                suffix={<Button type="primary" onClick={() => setVisible(true)}>Засах</Button>}
+                                defaultValue={getAddress(props.user.profile.address)}                                                                                
                             />                            
                         </Form.Item>  
                     </Col>
-                </Row>                                                                                                       
+                </Row>              
+                <Modal
+                    title="Хаяг оруулах"
+                    visible={visible}
+                    footer={false}                    
+                    // onOk={() => setVisible(false)}
+                    onCancel={() => setVisible(false)}
+                >
+                    <AddressForm address={props.user.profile.address ? props.user.profile.address : undefined} />
+                </Modal>                                              
                 <Form.Item>                                                                  
                     <Popconfirm title="Хадгалах уу？" okText="Тийм" cancelText="Үгүй" onConfirm={form.submit}>
                         <Button type="primary" icon={<CheckOutlined />} >

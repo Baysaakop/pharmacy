@@ -31,3 +31,7 @@ body {
 .ant-btn-text:hover {
     background: #dedede;
 }
+
+.ant-input:disabled {    
+    color: rgba(0, 0, 0, 0.75);
+}
