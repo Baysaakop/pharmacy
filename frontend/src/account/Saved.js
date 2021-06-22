@@ -1,32 +1,7 @@
-import { Divider, Typography, message, List } from "antd"
-import { useEffect, useState } from "react"
-import axios from "axios"; 
-import api from "../api";
+import { Divider, Typography, List } from "antd"
 import ProductCard from "../product/ProductCard";
 
-function Saved (props) {
-
-    const [favorite, setFavorite] = useState()
-    
-    useEffect(() => {   
-        getFavorite()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-    function getFavorite () {
-        axios({
-            method: 'GET',
-            url: `${api.favorites}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                        
-                console.log(res.data.results[0])
-                setFavorite(res.data.results[0])
-            } else {
-                setFavorite(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
-    }
+function Saved (props) {    
 
     return (
         <div style={{ padding: '16px', border: '1px solid #f0f2f5' }}>
@@ -42,7 +17,7 @@ function Saved (props) {
                     xl: 4,
                     xxl: 5,
                 }}
-                dataSource={favorite && favorite.items ? favorite.items : undefined}
+                dataSource={props.items}
                 renderItem={item => (
                     <List.Item>
                         <ProductCard item={item} action={true} />

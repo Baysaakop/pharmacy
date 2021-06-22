@@ -4,145 +4,126 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios"; 
 import api from "../api";
-import { connect } from 'react-redux';
 
 function ProductCard (props) {
-
     const [visible, setVisible] = useState(false)
-    const [cart, setCart] = useState()
-    const [favorite, setFavorite] = useState()
-
-    useEffect(() => {       
-        if (props.token) {
-            getFavorite()
-            getCart()
-        }
-    }, [props.token]) // eslint-disable-line react-hooks/exhaustive-deps
-
-    function getFavorite () {
-        axios({
-            method: 'GET',
-            url: `${api.favorites}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                        
-                setFavorite(res.data.results[0])
-            } else {
-                setFavorite(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
-    }
-
-    function getCart () {
-        axios({
-            method: 'GET',
-            url: `${api.carts}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                        
-                setCart(res.data.results[0])
-            } else {
-                setCart(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
-    }
 
     function addToSaved () {
-        if (props.token) {  
-            if (favorite) {                
-                axios({
-                    method: 'PUT',
-                    url: `${api.favorites}/${favorite.id}/`,
-                    data: {
-                        item: props.item.id,
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    if (favorite.items.find(x => x.id === props.item.id)) {
-                        notification['warning']({
-                            message: 'Жагсаалтаас хасагдлаа.',
-                            description:
-                              `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтаас хасагдлаа.`,
-                        });
-                    } else {
-                        notification['success']({
-                            message: 'Амжилттай хадгаллаа.',
-                            description:
-                              `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
-                        });
-                    }
-                    setFavorite(res.data)
-                }).catch(err => {
-                    console.log(err)
-                })
-            } else {
-                axios({
-                    method: 'POST',
-                    url: `${api.favorites}/`,
-                    data: {
-                        item: props.item.id, 
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    setFavorite(res.data)
-                    notification['success']({
-                        message: 'Амжилттай хадгаллаа.',
-                        description:
-                          `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            }            
+        if (props.user) {  
+            axios({
+                method: 'PUT',
+                url: `${api.profiles}/${props.user.profile.id}/`,
+                headers: {
+                    'Content-Type': 'application/json',                                              
+                },
+                data: {
+                    favorite: true,
+                    item: props.item.id,
+                    count: 1,
+                    token: props.token
+                }
+            })            
+            .then(res => {
+                if (res.status === 200 || res.status === 201) {
+                    console.log(res)                    
+                }                                                         
+            })
+            .catch(err => {                      
+                console.log(err.message)         
+                message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
+            }) 
+            // if (favorite) {                
+            //     axios({
+            //         method: 'PUT',
+            //         url: `${api.favorites}/${favorite.id}/`,
+            //         data: {
+            //             item: props.item.id,
+            //             token: props.token
+            //         }
+            //     }).then(res => {                    
+            //         if (favorite.items.find(x => x.id === props.item.id)) {
+            //             notification['warning']({
+            //                 message: 'Жагсаалтаас хасагдлаа.',
+            //                 description:
+            //                   `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтаас хасагдлаа.`,
+            //             });
+            //         } else {
+            //             notification['success']({
+            //                 message: 'Амжилттай хадгаллаа.',
+            //                 description:
+            //                   `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
+            //             });
+            //         }
+            //         setFavorite(res.data)
+            //     }).catch(err => {
+            //         console.log(err)
+            //     })
+            // } else {
+            //     axios({
+            //         method: 'POST',
+            //         url: `${api.favorites}/`,
+            //         data: {
+            //             item: props.item.id, 
+            //             token: props.token
+            //         }
+            //     }).then(res => {                    
+            //         setFavorite(res.data)
+            //         notification['success']({
+            //             message: 'Амжилттай хадгаллаа.',
+            //             description:
+            //               `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
+            //         });
+            //     }).catch(err => {
+            //         console.log(err)
+            //     })
+            // }            
         } else {
             props.history.push('/login')
         }
     }
 
     function addToCart() {        
-        if (props.token) {  
-            if (cart) {                
-                axios({
-                    method: 'PUT',
-                    url: `${api.carts}/${cart.id}/`,
-                    data: {
-                        item: props.item.id,
-                        count: 1,
-                        token: props.token
-                    }
-                }).then(res => {                                        
-                    setCart(res.data)
-                    notification['success']({
-                        message: 'Сагсанд нэмэгдлээ.',
-                        description: `'${props.item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            } else {
-                axios({
-                    method: 'POST',
-                    url: `${api.carts}/`,
-                    data: {
-                        item: props.item.id, 
-                        count: 1,
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    setCart(res.data)
-                    notification['success']({
-                        message: 'Сагсанд нэмэгдлээ.',
-                        description: `'${props.item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            }            
-        } else {
-            props.history.push('/login')
-        }
+        // if (props.token) {                       
+        //     if (cart) {                
+        //         axios({
+        //             method: 'PUT',
+        //             url: `${api.carts}/${cart.id}/`,
+        //             data: {
+        //                 item: props.item.id,
+        //                 count: 1,
+        //                 token: props.token
+        //             }
+        //         }).then(res => {                                        
+        //             setCart(res.data)
+        //             notification['success']({
+        //                 message: 'Сагсанд нэмэгдлээ.',
+        //                 description: `'${props.item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+        //             });
+        //         }).catch(err => {
+        //             console.log(err)
+        //         })
+        //     } else {
+        //         axios({
+        //             method: 'POST',
+        //             url: `${api.carts}/`,
+        //             data: {
+        //                 item: props.item.id, 
+        //                 count: 1,
+        //                 token: props.token
+        //             }
+        //         }).then(res => {                    
+        //             setCart(res.data)
+        //             notification['success']({
+        //                 message: 'Сагсанд нэмэгдлээ.',
+        //                 description: `'${props.item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+        //             });
+        //         }).catch(err => {
+        //             console.log(err)
+        //         })
+        //     }            
+        // } else {
+        //     props.history.push('/login')
+        // }
     }
 
     function getCategory (categories) {
@@ -169,7 +150,7 @@ function ProductCard (props) {
                     </Link>
                 }                
                 actions={ props.action ? [
-                    favorite && favorite.items.find(x => x.id === props.item.id) ? (
+                    props.user && props.user.profile.favorite.find(x => x.id === props.item.id) ? (
                         <Tooltip title="Хадгалсан">
                             <HeartOutlined style={{ color: '#EA2027' }} key="save" onClick={addToSaved} />
                         </Tooltip>
@@ -178,7 +159,7 @@ function ProductCard (props) {
                             <HeartOutlined key="save" onClick={addToSaved} />
                         </Tooltip>
                     ),               
-                    cart && cart.items.find(x => x.item.id === props.item.id) ? (                        
+                    props.user && props.user.profile.cart.find(x => x.item.id === props.item.id) ? (                        
                         <Tooltip title="Сагсанд байгаа">
                             <ShoppingCartOutlined style={{ color: '#000' }} key="cart" onClick={addToCart} />
                         </Tooltip>                        
@@ -234,10 +215,4 @@ function ProductCard (props) {
     )
 }
 
-const mapStateToProps = state => {
-    return {
-        token: state.token
-    }
-}
-
-export default connect(mapStateToProps)(ProductCard)
+export default (ProductCard)

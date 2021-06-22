@@ -5,33 +5,15 @@ import api from "../api";
 import { CarOutlined, CheckOutlined, CreditCardOutlined, DeleteOutlined, DoubleRightOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
 function Cart (props) {
-    const [cart, setCart] = useState()
     const [amount, setAmount] = useState(0)
 
-    useEffect(() => {   
-        getCart()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-    function getCart () {
-        axios({
-            method: 'GET',
-            url: `${api.carts}?token=${props.token}`,            
-        }).then(res => {        
-            if (res.data.count > 0) {                                       
-                let result = res.data.results[0]
-                let n = 0
-                result.items.forEach(x => {
-                    n = n + (x.item.price * x.count)
-                })
-                setAmount(n)
-                setCart(result)
-            } else {
-                setCart(undefined)
-            }
-        }).catch(err => {
-            message.error("Хуудсыг дахин ачааллана уу")
-        })     
-    }
+    useEffect(() => {        
+        let total = 0
+        props.items.forEach(element => {
+            total += element.item.price * element.count
+        });
+        setAmount(total)
+    }, [props.items])
 
     function onPlus (item) {              
         if (item.count + 1 < 100) {  
@@ -45,7 +27,8 @@ function Cart (props) {
                 }
             })
             .then(res => {
-                getCart()
+                //getCart()
+                console.log(res)
             })
             .catch(err => {
                 console.log(err.message)
@@ -65,7 +48,8 @@ function Cart (props) {
                 }
             })
             .then(res => {
-                getCart()
+                //getCart()
+                console.log(res)
             })
             .catch(err => {
                 console.log(err.message)
@@ -94,7 +78,7 @@ function Cart (props) {
             <List
                 itemLayout="vertical"
                 size="large"
-                dataSource={cart && cart.items ? cart.items : undefined}
+                dataSource={props.items}
                 renderItem={item => (                           
                     <List.Item 
                         key={item.id}

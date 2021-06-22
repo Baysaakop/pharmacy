@@ -1,4 +1,3 @@
-from .models import Profile
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
@@ -10,6 +9,7 @@ from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.account.adapter import get_adapter
 from addresses.models import Address, City, District
+from items.models import Item
 
 class CartItemViewSet(viewsets.ModelViewSet):
     serializer_class = CartItemSerializer
@@ -21,6 +21,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):            
         profile = self.get_object()        
+        print(request.data)
         user = profile.user          
         if 'username' in request.data:            
             user.username=request.data['username']                                     
@@ -33,23 +34,16 @@ class ProfileViewSet(viewsets.ModelViewSet):
         if 'birth_date' in request.data:
             profile.birth_date=request.data['birth_date']                       
         if 'address' in request.data:
-            if profile.address is None:                
-                address=Address.objects.create(
-                    city=City.objects.get(id=int(request.data['city'])),
-                    district=District.objects.get(id=int(request.data['district'])),
-                    section=request.data['section'],
-                    address=request.data['address']
-                )
-                profile.address=address
-            else:
-                if profile.address.city.id != int(request.data['city']):
-                    profile.address.city=City.objects.get(id=int(request.data['city']))
-                if profile.address.district.id != int(request.data['district']):
-                    profile.address.district=District.objects.get(id=int(request.data['district']))
-                if profile.address.section != request.data['section']:
-                    profile.address.section=request.data['section']
-                if profile.address.address != request.data['address']:
-                    profile.address.address=request.data['address']  
+            address,created=Address.objects.get_or_create(
+                city=City.objects.get(id=int(request.data['city'])),
+                district=District.objects.get(id=int(request.data['district'])),
+                section=request.data['section'],
+                address=request.data['address']
+            )
+            profile.address=address
+        if 'favorite' in request.data:
+            item = Item.objects.get(id=int(request.data['item']))
+            count = int(request.data['count'])            
         profile.save()
         user.save()
         serializer = ProfileSerializer(profile)

@@ -42,10 +42,35 @@ function AddressForm (props) {
 
     function onSelectCity(id) {                           
         getDisctricts(id)
+        form.setFieldsValue({
+            district: undefined,
+            section: undefined,
+            address: undefined
+        })
     }
 
-    function onFinish (values) {
-        console.log(values)
+    function onSelectDistrict(id) {                                   
+        form.setFieldsValue({            
+            section: undefined,
+            address: undefined
+        })
+    }
+
+    function onFinish (values) {                
+        props.changeAddress(values, getAddress(values))
+    }
+
+    function getAddress (address) {
+        let city = cities.find(x => x.id.toString() === address.city).name
+        let district = districts.find(x => x.id.toString() === address.district).name
+        let result =  city + ", " + district + ", дүүрэг"        
+        if (address.section) {
+            result = result + ", " + address.section + "-р хороо"
+        }
+        if (address.address) {
+            result = result + ", " + address.address
+        }        
+        return result
     }
 
     return (
@@ -75,7 +100,8 @@ function AddressForm (props) {
                 <Form.Item name="district" label="Дүүрэг"  rules={[{ required: true }]}>
                     <Select                                
                         placeholder="Дүүрэг сонгох"
-                        optionFilterProp="children"                             
+                        optionFilterProp="children"            
+                        onSelect={onSelectDistrict}                 
                     >
                         { districts ? districts.map(district => (
                             <Option key={district.id}>{district.name}</Option>

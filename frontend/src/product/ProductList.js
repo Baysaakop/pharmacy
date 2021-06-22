@@ -4,28 +4,47 @@ import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import axios from "axios";
 import api from "../api";
+import { connect } from 'react-redux';
 
 const { CheckableTag } = Tag
 
 function ProductList (props) {
-
+    const [user, setUser] = useState()
     const [categories, setCategories] = useState([])
     const [selectedTags, setSelectedTags] = useState([])
     const [tags, setTags] = useState([])
     const [items, setItems] = useState()
 
     useEffect(() => {
+        if (props.token) {
+            getUser()
+        }        
         getProducts()
         getCategories()
         getTags()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [props.token]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    function getUser() {
+        axios({
+            method: 'GET',
+            url: api.profile,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${props.token}`
+            }
+        }).then(res => {               
+            console.log(res.data)        
+            setUser(res.data)
+        }).catch(err => {
+            console.log(err)
+        })
+    }
 
     function getProducts () {
         axios({
             method: 'GET',
             url: `${api.items}/`,            
-        }).then(res => {            
-            console.log(res.data.results)
+        }).then(res => {                        
             setItems(res.data.results)
         }).catch(err => {
             message.error("Хуудсыг дахин ачааллана уу")
@@ -111,7 +130,7 @@ function ProductList (props) {
                         dataSource={items ? items : undefined}
                         renderItem={item => (
                             <List.Item>
-                                <ProductCard item={item} action={true} />
+                                <ProductCard item={item} user={user} token={props.token} action={true} />
                             </List.Item>
                         )}
                     />
@@ -121,4 +140,10 @@ function ProductList (props) {
     )
 }
 
-export default ProductList
+const mapStateToProps = state => {
+    return {
+        token: state.token
+    }
+}
+
+export default connect(mapStateToProps)(ProductList)

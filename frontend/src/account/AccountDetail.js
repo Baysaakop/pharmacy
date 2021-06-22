@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Popconfirm, Button, message, Row, Col, DatePicker, Typography, Divider, Modal } from 'antd';
 import { UserOutlined, MobileOutlined, MailOutlined, CheckOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import AddressForm from './AddressForm';
 function AccountDetail (props) {
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(false)
+    const [address, setAddress] = useState()
 
     function onFinish (values) {                          
         var formData = new FormData();
@@ -27,7 +28,14 @@ function AccountDetail (props) {
         if (values.birth_date) {
             let date = new Date(moment(values.birth_date));
             formData.append('birth_date', date.getFullYear().toString() + "-" + (date.getMonth() + 1).toString() + "-" + date.getDate().toString());        
-        }                
+        }        
+        if (address) {
+            formData.append('address', true)
+            formData.append('city', address.city)
+            formData.append('district', address.district)
+            formData.append('section', address.section)
+            formData.append('address', address.address)
+        }        
         axios({
             method: 'PUT',
             url: `${api.profiles}/${props.user.profile.id}/`,
@@ -48,18 +56,26 @@ function AccountDetail (props) {
         })          
     }
 
-    function getAddress (address) {
-        if (!address || address == null) {
+    function getAddress (address_obj) {
+        if (!address_obj || address_obj == null) {
             return ""
         }
-        let result = address.city.name + ", " + address.district.name + " дүүрэг"
-        if (address.section) {
-            result = result + ", " + address.section + "-р хороо"
+        let result = address_obj.city.name + ", " + address_obj.district.name + " дүүрэг"
+        if (address_obj.section) {
+            result = result + ", " + address_obj.section + "-р хороо"
         }
-        if (address.address) {
-            result = result + ", " + address.address
+        if (address_obj.address) {
+            result = result + ", " + address_obj.address
         }        
         return result
+    }
+
+    function changeAddress (values, address_text) {        
+        setAddress(values)
+        form.setFieldsValue({
+            address: address_text
+        })
+        setVisible(false)
     }
 
     return (
@@ -118,7 +134,7 @@ function AccountDetail (props) {
                     // onOk={() => setVisible(false)}
                     onCancel={() => setVisible(false)}
                 >
-                    <AddressForm address={props.user.profile.address ? props.user.profile.address : undefined} />
+                    <AddressForm address={props.user.profile.address ? props.user.profile.address : undefined} changeAddress={changeAddress} />
                 </Modal>                                              
                 <Form.Item>                                                                  
                     <Popconfirm title="Хадгалах уу？" okText="Тийм" cancelText="Үгүй" onConfirm={form.submit}>
