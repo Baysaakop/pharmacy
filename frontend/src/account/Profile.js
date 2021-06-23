@@ -81,9 +81,9 @@ function Profile (props) {
                         { key === "1" ?
                             <AccountDetail user={user} token={props.token} />
                         : key === "2" ?
-                            <Saved items={user.profile.favorite} />
+                            <Saved items={user.profile.favorite} user={user} />
                         : key === "3" ? 
-                            <Cart items={user.profile.cart} />
+                            <Cart items={user.profile.cart} user={user} />
                         : key === "4" ?
                             <Typography.Title>Order history</Typography.Title>
                         : key === "5" ? 

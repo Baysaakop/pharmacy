@@ -2,6 +2,7 @@ import { Divider, Typography, message, List, Button, Steps } from "antd"
 import React, { useEffect, useState } from "react"
 import axios from "axios"; 
 import api from "../api";
+import { Link } from "react-router-dom";
 import { CarOutlined, CheckOutlined, CreditCardOutlined, DeleteOutlined, DoubleRightOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
 function Cart (props) {
@@ -96,7 +97,7 @@ function Cart (props) {
                         }
                     >
                         <List.Item.Meta                                            
-                            title={<a href={item.item.id}>{item.item.name}</a>}
+                            title={<Link to={`products/${item.item.id}`}>{item.item.name}</Link>}
                             description={item.item.company.name}
                         />
                         <p>

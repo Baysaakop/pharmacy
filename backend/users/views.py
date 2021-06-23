@@ -20,8 +20,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
 
     def update(self, request, *args, **kwargs):            
-        profile = self.get_object()        
-        print(request.data)
+        profile = self.get_object()                
         user = profile.user          
         if 'username' in request.data:            
             user.username=request.data['username']                                     
@@ -42,8 +41,23 @@ class ProfileViewSet(viewsets.ModelViewSet):
             )
             profile.address=address
         if 'favorite' in request.data:
+            item = Item.objects.get(id=int(request.data['item']))                 
+            if item in profile.favorite.all():
+                profile.favorite.remove(item)
+            else:
+                profile.favorite.add(item)
+        if 'cart' in request.data:
             item = Item.objects.get(id=int(request.data['item']))
-            count = int(request.data['count'])            
+            count = int(request.data['count'])   
+            cartitem = profile.cart.all().filter(item=item).first()
+            if cartitem is None:
+                cartitem = CartItem.objects.create(
+                    item=item,
+                    count=count
+                )
+                profile.cart.add(cartitem)
+            else:
+                profile.cart.remove(cartitem)
         profile.save()
         user.save()
         serializer = ProfileSerializer(profile)

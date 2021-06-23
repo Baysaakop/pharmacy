@@ -1,7 +1,14 @@
 import { Divider, Typography, List } from "antd"
+import { useState } from "react";
 import ProductCard from "../product/ProductCard";
 
 function Saved (props) {    
+
+    const [items, setItems] = useState(props.items)
+
+    function onRemove (data) {
+        setItems(data)
+    }
 
     return (
         <div style={{ padding: '16px', border: '1px solid #f0f2f5' }}>
@@ -17,10 +24,10 @@ function Saved (props) {
                     xl: 4,
                     xxl: 5,
                 }}
-                dataSource={props.items}
+                dataSource={items}
                 renderItem={item => (
                     <List.Item>
-                        <ProductCard item={item} action={true} />
+                        <ProductCard item={item} user={props.user} type="favorite" onRemove={onRemove} />
                     </List.Item>
                 )}
             />

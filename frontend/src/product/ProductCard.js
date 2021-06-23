@@ -1,12 +1,21 @@
-import { EllipsisOutlined, HeartOutlined, ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
-import { Card, Tooltip, Typography, Modal, message, notification } from "antd";
+import { EllipsisOutlined, HeartOutlined, MinusCircleOutlined, ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
+import { Card, Tooltip, Typography, Modal, message, Button } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import axios from "axios"; 
 import api from "../api";
 
 function ProductCard (props) {
     const [visible, setVisible] = useState(false)
+    const [favorite, setFavorite] = useState()
+    const [cart, setCart] = useState()
+
+    useEffect(() => {
+        if (props.user) {
+            setFavorite(props.user.profile.favorite)
+            setCart(props.user.profile.cart)
+        }        
+    }, [props.user])
 
     function addToSaved () {
         if (props.user) {  
@@ -18,112 +27,77 @@ function ProductCard (props) {
                 },
                 data: {
                     favorite: true,
-                    item: props.item.id,
-                    count: 1,
-                    token: props.token
+                    item: props.item.id                           
                 }
             })            
             .then(res => {
-                if (res.status === 200 || res.status === 201) {
-                    console.log(res)                    
+                if (res.status === 200 || res.status === 201) {                    
+                    setFavorite(res.data.favorite)          
                 }                                                         
             })
             .catch(err => {                      
                 console.log(err.message)         
                 message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
-            }) 
-            // if (favorite) {                
-            //     axios({
-            //         method: 'PUT',
-            //         url: `${api.favorites}/${favorite.id}/`,
-            //         data: {
-            //             item: props.item.id,
-            //             token: props.token
-            //         }
-            //     }).then(res => {                    
-            //         if (favorite.items.find(x => x.id === props.item.id)) {
-            //             notification['warning']({
-            //                 message: 'Жагсаалтаас хасагдлаа.',
-            //                 description:
-            //                   `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтаас хасагдлаа.`,
-            //             });
-            //         } else {
-            //             notification['success']({
-            //                 message: 'Амжилттай хадгаллаа.',
-            //                 description:
-            //                   `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
-            //             });
-            //         }
-            //         setFavorite(res.data)
-            //     }).catch(err => {
-            //         console.log(err)
-            //     })
-            // } else {
-            //     axios({
-            //         method: 'POST',
-            //         url: `${api.favorites}/`,
-            //         data: {
-            //             item: props.item.id, 
-            //             token: props.token
-            //         }
-            //     }).then(res => {                    
-            //         setFavorite(res.data)
-            //         notification['success']({
-            //             message: 'Амжилттай хадгаллаа.',
-            //             description:
-            //               `'${props.item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
-            //         });
-            //     }).catch(err => {
-            //         console.log(err)
-            //     })
-            // }            
+            })             
         } else {
-            props.history.push('/login')
+            props.history.push('/login')            
         }
     }
 
     function addToCart() {        
-        // if (props.token) {                       
-        //     if (cart) {                
-        //         axios({
-        //             method: 'PUT',
-        //             url: `${api.carts}/${cart.id}/`,
-        //             data: {
-        //                 item: props.item.id,
-        //                 count: 1,
-        //                 token: props.token
-        //             }
-        //         }).then(res => {                                        
-        //             setCart(res.data)
-        //             notification['success']({
-        //                 message: 'Сагсанд нэмэгдлээ.',
-        //                 description: `'${props.item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-        //             });
-        //         }).catch(err => {
-        //             console.log(err)
-        //         })
-        //     } else {
-        //         axios({
-        //             method: 'POST',
-        //             url: `${api.carts}/`,
-        //             data: {
-        //                 item: props.item.id, 
-        //                 count: 1,
-        //                 token: props.token
-        //             }
-        //         }).then(res => {                    
-        //             setCart(res.data)
-        //             notification['success']({
-        //                 message: 'Сагсанд нэмэгдлээ.',
-        //                 description: `'${props.item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-        //             });
-        //         }).catch(err => {
-        //             console.log(err)
-        //         })
-        //     }            
-        // } else {
-        //     props.history.push('/login')
-        // }
+        if (props.user) {  
+            axios({
+                method: 'PUT',
+                url: `${api.profiles}/${props.user.profile.id}/`,
+                headers: {
+                    'Content-Type': 'application/json',                                              
+                },
+                data: {
+                    cart: true,
+                    item: props.item.id,
+                    count: 1                                               
+                }
+            })            
+            .then(res => {
+                if (res.status === 200 || res.status === 201) {                                  
+                    setCart(res.data.cart)          
+                }                                                         
+            })
+            .catch(err => {                      
+                console.log(err.message)         
+                message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
+            })             
+        } else {
+            props.history.push('/login')            
+        }        
+    }
+
+    function onRemove() {
+        if (props.user) {  
+            axios({
+                method: 'PUT',
+                url: `${api.profiles}/${props.user.profile.id}/`,
+                headers: {
+                    'Content-Type': 'application/json',                                              
+                },
+                data: {
+                    favorite: true,
+                    item: props.item.id                           
+                }
+            })            
+            .then(res => {
+                if (res.status === 200 || res.status === 201) {                    
+                    setFavorite(res.data.favorite)      
+                    props.onRemove(res.data.favorite)    
+                }                                                         
+            })
+            .catch(err => {                      
+                console.log(err.message)         
+                message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
+            })             
+        } else {
+            props.history.push('/login')            
+        }
     }
 
     function getCategory (categories) {
@@ -149,8 +123,8 @@ function ProductCard (props) {
                         <img alt={props.item.name} src={props.item.images[0].image} style={{ width: '100%', height: 'auto' }} />
                     </Link>
                 }                
-                actions={ props.action ? [
-                    props.user && props.user.profile.favorite.find(x => x.id === props.item.id) ? (
+                actions={ props.type === "list" ? [
+                    favorite && favorite.find(x => x.id === props.item.id) ? (
                         <Tooltip title="Хадгалсан">
                             <HeartOutlined style={{ color: '#EA2027' }} key="save" onClick={addToSaved} />
                         </Tooltip>
@@ -159,7 +133,7 @@ function ProductCard (props) {
                             <HeartOutlined key="save" onClick={addToSaved} />
                         </Tooltip>
                     ),               
-                    props.user && props.user.profile.cart.find(x => x.item.id === props.item.id) ? (                        
+                    cart && cart.find(x => x.item.id === props.item.id) ? (                        
                         <Tooltip title="Сагсанд байгаа">
                             <ShoppingCartOutlined style={{ color: '#000' }} key="cart" onClick={addToCart} />
                         </Tooltip>                        
@@ -171,6 +145,8 @@ function ProductCard (props) {
                     <Tooltip title="Дэлгэрэнгүй">
                         <EllipsisOutlined key="ellip" onClick={() => setVisible(true)} />
                     </Tooltip>,                                        
+                ] : props.type === "favorite" ? [
+                    <Button danger icon={<MinusCircleOutlined />} type="text" onClick={onRemove}>Жагсаалтаас хасах</Button>
                 ] : <></>}
             >
                 <Link to={`/products/${props.item.id}`}>

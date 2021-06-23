@@ -10,10 +10,11 @@ import { connect } from 'react-redux';
 
 function ProductDetail (props) {
 
-    const [item, setItem] = useState()
-    const [cart, setCart] = useState()
-    const [favorite, setFavorite] = useState()
+    const [item, setItem] = useState()    
     const [count, setCount] = useState(1)
+    const [user, setUser] = useState()
+    const [favorite, setFavorite] = useState()
+    const [cart, setCart] = useState()
 
     useEffect(() => {
         axios({
@@ -25,43 +26,25 @@ function ProductDetail (props) {
             message.error("Хуудсыг дахин ачааллана уу")
         })        
         if (props.token) {
-            getFavorite()
-            getCart()
+            getUser()
         }
-    }, [props.match.params.id]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [props.match.params.id]) // eslint-disable-line react-hooks/exhaustive-deps    
 
-    function getFavorite () {
-        if (props.token) {
-            axios({
-                method: 'GET',
-                url: `${api.favorites}?token=${props.token}`,            
-            }).then(res => {        
-                if (res.data.count > 0) {                        
-                    setFavorite(res.data.results[0])
-                } else {
-                    setFavorite(undefined)
-                }
-            }).catch(err => {
-                message.error("Хуудсыг дахин ачааллана уу")
-            })     
-        }
-    }
-
-    function getCart () {
-        if (props.token) {
-            axios({
-                method: 'GET',
-                url: `${api.carts}?token=${props.token}`,            
-            }).then(res => {        
-                if (res.data.count > 0) {                        
-                    setCart(res.data.results[0])
-                } else {
-                    setCart(undefined)
-                }
-            }).catch(err => {
-                message.error("Хуудсыг дахин ачааллана уу")
-            })     
-        }
+    function getUser() {
+        axios({
+            method: 'GET',
+            url: api.profile,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${props.token}`
+            }
+        }).then(res => {                           
+            setUser(res.data)
+            setFavorite(res.data.profile.favorite)
+            setCart(res.data.profile.cart)
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
     function formatNumber(num) {
@@ -77,144 +60,81 @@ function ProductDetail (props) {
     }
 
     function addToSaved () {
-        if (props.token) {  
-            if (favorite) {                
-                axios({
-                    method: 'PUT',
-                    url: `${api.favorites}/${favorite.id}/`,
-                    data: {
-                        item: item.id,
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    if (favorite.items.find(x => x.id === item.id)) {
-                        notification['warning']({
-                            message: 'Жагсаалтаас хасагдлаа.',
-                            description:
-                              `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтаас хасагдлаа.`,
+        if (user) {  
+            axios({
+                method: 'PUT',
+                url: `${api.profiles}/${user.profile.id}/`,
+                headers: {
+                    'Content-Type': 'application/json',                                              
+                },
+                data: {
+                    favorite: true,
+                    item: item.id                           
+                }
+            })            
+            .then(res => {
+                if (res.status === 200 || res.status === 201) {            
+                    if (res.data.favorite.find(x => x.id === item.id)) {
+                        notification['success']({
+                            message: 'Бүтээгдэхүүнийг хадгаллаа.',
+                            description: `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
                         });
                     } else {
-                        notification['success']({
-                            message: 'Амжилттай хадгаллаа.',
-                            description:
-                              `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
+                        notification['warning']({
+                            message: 'Бүтээгдэхүүнийг хаслаа.',
+                            description: `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтаас хасагдлаа.`,
                         });
                     }
-                    setFavorite(res.data)
-                }).catch(err => {
-                    console.log(err)
-                })
-            } else {
-                axios({
-                    method: 'POST',
-                    url: `${api.favorites}/`,
-                    data: {
-                        item: item.id, 
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    setFavorite(res.data)
-                    notification['success']({
-                        message: 'Амжилттай хадгаллаа.',
-                        description:
-                          `'${item.name}' бүтээгдэхүүн таны хадгалсан бүтээгдэхүүнүүдийн жагсаалтад нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            }            
+                    setFavorite(res.data.favorite)                              
+                }                                                         
+            })
+            .catch(err => {                      
+                console.log(err.message)         
+                message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
+            })             
         } else {
-            props.history.push('/login')
-        }
+            props.history.push('/login')            
+        }        
     }
 
-    function addToCart() {        
-        if (props.token) {  
-            if (cart) {                
-                axios({
-                    method: 'PUT',
-                    url: `${api.carts}/${cart.id}/`,
-                    data: {
-                        item: item.id,
-                        count: count,
-                        token: props.token
-                    }
-                }).then(res => {                                        
-                    setCart(res.data)
-                    notification['success']({
-                        message: 'Сагсанд нэмэгдлээ.',
-                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            } else {
-                axios({
-                    method: 'POST',
-                    url: `${api.carts}/`,
-                    data: {
-                        item: item.id, 
-                        count: count,
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    setCart(res.data)
-                    notification['success']({
-                        message: 'Сагсанд нэмэгдлээ.',
-                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            }            
+    function addToCart() {       
+        if (user) {  
+            axios({
+                method: 'PUT',
+                url: `${api.profiles}/${user.profile.id}/`,
+                headers: {
+                    'Content-Type': 'application/json',                                              
+                },
+                data: {
+                    cart: true,
+                    item: item.id,
+                    count: count                           
+                }
+            })            
+            .then(res => {
+                if (res.status === 200 || res.status === 201) {              
+                    if (res.data.cart.find(x => x.item.id === item.id)) {
+                        notification['success']({
+                            message: 'Сагсанд нэмэгдлээ.',
+                            description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
+                        });
+                    } else {
+                        notification['warning']({
+                            message: 'Сагснаас хасагдлаа.',
+                            description: `'${item.name}' бүтээгдэхүүн сагснаас хасагдлаа.`,
+                        });
+                    }      
+                    setCart(res.data.cart)                              
+                }                                                         
+            })
+            .catch(err => {                      
+                console.log(err.message)         
+                message.error("Алдаа гарлаа. Дахин оролдоно уу.")            
+            })             
         } else {
-            props.history.push('/login')
-        }
-    }
-
-    function order() {        
-        if (props.token) {  
-            if (cart) {                
-                axios({
-                    method: 'PUT',
-                    url: `${api.carts}/${cart.id}/`,
-                    data: {
-                        item: item.id,
-                        count: count,
-                        token: props.token
-                    }
-                }).then(res => {                                        
-                    setCart(res.data)
-                    notification['success']({
-                        message: 'Сагсанд нэмэгдлээ.',
-                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            } else {
-                axios({
-                    method: 'POST',
-                    url: `${api.carts}/`,
-                    data: {
-                        item: item.id, 
-                        count: count,
-                        token: props.token
-                    }
-                }).then(res => {                    
-                    setCart(res.data)
-                    notification['success']({
-                        message: 'Сагсанд нэмэгдлээ.',
-                        description: `'${item.name}' бүтээгдэхүүн таны сагсанд нэмэгдлээ.`,
-                    });
-                }).catch(err => {
-                    console.log(err)
-                })
-            }            
-        } else {
-            props.history.push('/login')
-        }
-    }
+            props.history.push('/login')            
+        }         
+    }    
 
     return (
         <div style={{ padding: '0px 10%' }}>    
@@ -258,25 +178,19 @@ function ProductDetail (props) {
                                     <Typography.Title level={5} style={{ margin: '0' }}>Үнэ:</Typography.Title>
                                     <Typography.Title level={2} style={{ margin: '0' }}>{formatNumber(item.price)}₮</Typography.Title>
                                 </div>                                
-                                <div>                                                                        
-                                    {/* <Typography.Title level={5} style={{ margin: '0' }}>Үнэлгээ:</Typography.Title>
-                                    <div>
-                                        <Rate allowHalf value={item.rating / 10}/>
-                                        <span className="ant-rate-text" style={{ fontWeight: 'bold' }}>- {item.rating / 10}</span>
-                                    </div> */}
-                                </div>
                             </div>                            
                             <Divider style={{ margin: '16px 0' }} />                                                                                                                                                                                                                          
                             <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
                             <InputNumber value={count} size="large" min={1} max={100} style={{ margin: '0 8px 8px 8px' }} onChange={(val) => setCount(val)} />                                                                       
                             <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={addToCart} >                                    
-                                { cart && cart.items.find(x => x.item.id === item.id) ? `Сагсанд байгаа (${cart.items.find(x => x.item.id === item.id).count} ш)` : 'Сагсанд хийх' }                                                              
+                                { cart && cart.find(x => x.item.id === item.id) ? 'Сагснаас гаргах' : 'Сагсанд хийх' }                                                              
                             </Button>
                             <Link to="/profile?key=cart">
                                 <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ margin: '0 8px 8px 0' }}>Захиалах</Button>                                
                             </Link>
+                            <br />
                             <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={addToSaved}>
-                                { favorite && favorite.items.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
+                                { favorite && favorite.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
                             </Button>
                             <Button type="ghost" size="large" icon={<ShopOutlined />} style={{ margin: '0 8px 8px 0' }}>Зарагдаж буй салбарууд</Button>                            
                             <Divider style={{ margin: '16px 0' }} />
@@ -290,7 +204,7 @@ function ProductDetail (props) {
                                     <CarOutlined style={{ fontSize: '24px' }} />
                                 </div>
                                 <div style={{ marginLeft: '16px' }}>
-                                    <Typography.Text>Таны 14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text>
+                                    <Typography.Text>14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text>
                                 </div>
                             </div>
                         </Col>

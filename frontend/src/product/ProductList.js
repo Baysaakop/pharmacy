@@ -130,7 +130,7 @@ function ProductList (props) {
                         dataSource={items ? items : undefined}
                         renderItem={item => (
                             <List.Item>
-                                <ProductCard item={item} user={user} token={props.token} action={true} />
+                                <ProductCard history={props.history} item={item} user={user} type="list" />
                             </List.Item>
                         )}
                     />
