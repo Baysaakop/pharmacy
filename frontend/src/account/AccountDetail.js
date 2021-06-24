@@ -4,7 +4,7 @@ import { UserOutlined, MobileOutlined, MailOutlined, CheckOutlined, EnvironmentO
 import axios from 'axios';
 import api from '../api';
 import moment from 'moment';
-import AddressForm from './AddressForm';
+import AddressForm from '../components/AddressForm';
 
 function AccountDetail (props) {
     const [form] = Form.useForm()
@@ -80,7 +80,7 @@ function AccountDetail (props) {
 
     return (
         <div>            
-            <Form layout="vertical" form={form} onFinish={onFinish} style={{ padding: '16px', border: '1px solid #f0f2f5' }}>
+            <Form layout="vertical" form={form} onFinish={onFinish} style={{ padding: '16px', border: '1px solid #000' }}>
                 <Typography.Title level={4}>Хувийн мэдээлэл шинэчлэх</Typography.Title>
                 <Divider />
                 <Row gutter={[16, 0]}>
@@ -130,8 +130,7 @@ function AccountDetail (props) {
                 <Modal
                     title="Хаяг оруулах"
                     visible={visible}
-                    footer={false}                    
-                    // onOk={() => setVisible(false)}
+                    footer={false}                                        
                     onCancel={() => setVisible(false)}
                 >
                     <AddressForm address={props.user.profile.address ? props.user.profile.address : undefined} changeAddress={changeAddress} />

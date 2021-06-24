@@ -4,6 +4,7 @@ import ImageUpload from '../components/ImageUpload'
 import axios from "axios";
 import api from "../api";
 import { useState, useEffect } from "react";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 
 function ProductAdd (props) {
 
@@ -11,11 +12,13 @@ function ProductAdd (props) {
     const [image, setImage] = useState()
     const [categories, setCategories] = useState([])
     const [companies, setCompanies] = useState([])
+    const [shops, setShops] = useState([])
     const [tags, setTags] = useState([])
 
     useEffect(() => {
         getCategories()
         getCompanies()
+        getShops()
         getTags()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -33,6 +36,7 @@ function ProductAdd (props) {
             message.error("Хуудсыг дахин ачааллана уу")
         })
     }
+
     function getCompanies () {
         axios({
             method: 'GET',
@@ -43,6 +47,21 @@ function ProductAdd (props) {
             }        
         }).then(res => {
             setCompanies(res.data.results)
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })
+    }   
+
+    function getShops () {
+        axios({
+            method: 'GET',
+            url: `${api.shops}/`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${props.token}`            
+            }        
+        }).then(res => {
+            setShops(res.data.results)
         }).catch(err => {
             message.error("Хуудсыг дахин ачааллана уу")
         })
@@ -135,42 +154,22 @@ function ProductAdd (props) {
                 style={{ marginTop: '16px', border: '1px solid #dedede', padding: '16px' }}
             >
                 <Row gutter={[8, 8]}>
-                    <Col span={12}>
-                        <Form.Item name="name" label="Нэр"  rules={[{ required: true }]}>
+                    <Col span={8}>
+                        <Form.Item name="name" label="Нэр" rules={[{ required: true }]}>
                             <Input />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
-                        <Form.Item name="code" label="Код"  rules={[{ required: true }]}>
-                            <Input />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item name="description" label="Тайлбар">
-                            <Input.TextArea rows={4} />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item name="ingredients" label="Найрлага">
-                            <Input.TextArea rows={4} />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item name="usage" label="Хэрэглэх заавар">
-                            <Input.TextArea rows={4} />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item name="caution" label="Анхааруулга">
-                            <Input.TextArea rows={4} />
-                        </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                        <Form.Item name="price" label="Үнэ">
+                    <Col span={8}>
+                        <Form.Item name="price" label="Үнэ" rules={[{ required: true }]}>
                             <Input suffix="₮" />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col span={8}>
+                        <Form.Item name="is_brand" label="Бренд бүтээгдэхүүн">
+                            <Checkbox>Тийм</Checkbox>
+                        </Form.Item>
+                    </Col>             
+                    <Col span={12}>
                         <Form.Item name="company" label="Компани">
                             <Select                                
                                 placeholder="Компани сонгох"
@@ -182,7 +181,19 @@ function ProductAdd (props) {
                             </Select>          
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col span={12}>
+                        <Form.Item name="shops" label="Зарагдаж буй салбарууд">
+                            <Select                                
+                                placeholder="Компани сонгох"
+                                optionFilterProp="children"
+                            >
+                                { shops ? shops.map(shop => (
+                                    <Select.Option key={shop.id}>{shop.name}</Select.Option>
+                                )) : <></> }
+                            </Select>          
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
                         <Form.Item name="category" label="Төрөл">
                             <Select          
                                 mode="multiple"                      
@@ -195,7 +206,7 @@ function ProductAdd (props) {
                             </Select>           
                         </Form.Item>
                     </Col>                    
-                    <Col span={6}>
+                    <Col span={12}>
                         <Form.Item name="tag" label="Таг">
                             <Select                      
                                 mode="multiple"          
@@ -207,10 +218,39 @@ function ProductAdd (props) {
                                 )) : <></>}
                             </Select>     
                         </Form.Item>        
+                    </Col>       
+                    <Col span={24}>
+                        <Form.Item name="description" label="Тайлбар">
+                            <Input.TextArea rows={3} />
+                        </Form.Item>
                     </Col>
+                    <Col span={24}>
+                        <Form.Item name="ingredients" label="Найрлага">
+                            <Input.TextArea rows={3} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                        <Form.Item name="usage" label="Хэрэглэх заавар">
+                            <Input.TextArea rows={3} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                        <Form.Item name="caution" label="Анхааруулга">
+                            <Input.TextArea rows={3} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                        <Form.Item name="storage" label="Хадгалалт">
+                            <Input.TextArea rows={3} />
+                        </Form.Item>
+                    </Col>                                        
                 </Row>               
                 <Form.Item name="image" label="Зураг">
-                    <ImageUpload image={image} onImageSelected={onImageSelected} height="200px" width="200px" />     
+                    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                        <ImageUpload image={image} onImageSelected={onImageSelected} height="200px" width="200px" />     
+                        <ImageUpload image={image} onImageSelected={onImageSelected} height="200px" width="200px" />     
+                        <ImageUpload image={image} onImageSelected={onImageSelected} height="200px" width="200px" />                             
+                    </div>                    
                 </Form.Item>
                 <Popconfirm title="Хадгалах уу?" onConfirm={form.submit} okText="Тийм" cancelText="Үгүй">
                     <Button type="primary" style={{ marginRight: '8px' }}>Хадгалах</Button>

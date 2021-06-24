@@ -1,4 +1,4 @@
-import { Grid, Breadcrumb, Button, Result,  Row, Col, Typography, Avatar, Statistic, Menu } from 'antd';
+import { Grid, Breadcrumb, Button, Result,  Row, Col, Typography, Avatar, Statistic, Menu, Rate } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import Logout from './Logout';
 import Cart from './Cart';
 
 const { useBreakpoint } = Grid;
+const percentages = ['2%', '3%', '4%', '5%', '6%'];
 
 function Profile (props) {
     const screens = useBreakpoint()
@@ -45,6 +46,10 @@ function Profile (props) {
         setKey(e.key)
     }
 
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
     return (
         <div style={{ margin: '24px 10%' }}>
             <Breadcrumb>
@@ -59,15 +64,19 @@ function Profile (props) {
             {user ? (
                 <Row gutter={[16, 16]}>
                     <Col span={6}>
-                        <div style={{ backgroundColor: '#f0f2f5', padding: '16px' }}>
+                        <div style={{ border: '1px solid #000', padding: '16px' }}>
                             <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '16px' }}>
-                                <Avatar size={48} style={{ backgroundColor: '#FFF', color: '#000', border: '2px solid #000', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Avatar>
+                                <Avatar size={48} shape="square" style={{ backgroundColor: '#FFF', color: '#000', border: '2px solid #000', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Avatar>
                                 <div style={{ marginLeft: '16px' }}>
                                     <Typography.Title level={4} style={{ margin: 0 }}>{user.username}</Typography.Title>
                                     <Typography.Text>{user.email}</Typography.Text>
                                 </div>
-                            </div>                                                
-                            <Statistic title="Таны бонус" value={5130} suffix="оноо" prefix={<GoldOutlined />} />       
+                            </div>                             
+                            <Typography.Title level={5} style={{ margin: 0 }}>Урамшууллын хувь</Typography.Title>                                               
+                            <Rate disabled count={5} value={4} tooltips={percentages} />                            
+                            <span className="ant-rate-text" style={{ fontWeight: 'bold' }}>- 5%</span>
+                            <Typography.Title level={5} style={{ margin: 0 }}>Урамшууллын оноо</Typography.Title>  
+                            <Typography.Title level={4} style={{ margin: 0 }}><GoldOutlined /> {formatNumber(37113.18)}</Typography.Title>                                                                         
                             <Menu mode="inline" defaultSelectedKeys={key} style={{ backgroundColor: 'rgba(0, 0, 0, 0)', marginTop: '16px' }} onClick={onSelect}>
                                 <Menu.Item icon={<UserOutlined style={{ fontSize: '18px' }} />} key="1">Хувийн мэдээлэл</Menu.Item>
                                 <Menu.Item icon={<HeartOutlined style={{ fontSize: '18px' }} />} key="2">Хадгалсан</Menu.Item>

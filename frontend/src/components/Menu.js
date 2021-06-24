@@ -203,7 +203,7 @@ function CustomMenu (props) {
                                 ) : (<></>)}
                                 <Link to="/profile">
                                     <Tooltip title="Профайл">
-                                        <Button size="large" type="text" style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Button>  
+                                        <Button size="large" type="text" style={{ marginLeft: '8px', width: '40px', height: '40px', fontWeight: 'bold', border: '2px solid black' }}>{user.username.toString().slice(0, 1)}</Button>  
                                     </Tooltip>
                                 </Link>                            
                             </>

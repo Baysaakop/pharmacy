@@ -12,7 +12,7 @@ function AddressForm (props) {
 
     useEffect(() => {        
         getCities()            
-        if (props.address) {
+        if (props.address) {            
             getDisctricts(props.address.city.id.toString())        
         }
     }, [props.address])
@@ -57,6 +57,7 @@ function AddressForm (props) {
     }
 
     function onFinish (values) {                
+        console.log(values)
         props.changeAddress(values, getAddress(values))
     }
 

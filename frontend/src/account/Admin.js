@@ -13,6 +13,7 @@ import CompanyEdit from "../company/CompanyEdit";
 import ProductAdd from "../product/ProductAdd";
 import ProductEdit from "../product/ProductEdit";
 import ShopAdd from "../shop/ShopAdd";
+import ShopEdit from "../shop/ShopEdit";
 
 function Admin (props) {
     const [user, setUser] = useState()
@@ -56,7 +57,7 @@ function Admin (props) {
                     }
                 />
             ) : (
-                <Tabs defaultActiveKey="1">
+                <Tabs defaultActiveKey="1" style={{ marginBottom: '16px' }}>
                     <Tabs.TabPane tab="Бүтээгдэхүүн" key="1">
                         <Tabs defaultActiveKey="1">
                             <Tabs.TabPane tab="Нэмэх" key="1">
@@ -100,10 +101,10 @@ function Admin (props) {
                     <Tabs.TabPane tab="Салбар" key="5">
                         <Tabs defaultActiveKey="1">
                             <Tabs.TabPane tab="Нэмэх" key="1">
-                                <ShopAdd token={props.token} />
+                                <ShopAdd user={user} />
                             </Tabs.TabPane>
                             <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                
+                                <ShopEdit user={user} />
                             </Tabs.TabPane>
                         </Tabs>
                     </Tabs.TabPane>

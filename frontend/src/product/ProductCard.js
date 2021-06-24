@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios"; 
 import api from "../api";
+import blank from './blank.jpg'
+import './ProductCard.css'
 
 function ProductCard (props) {
     const [visible, setVisible] = useState(false)
@@ -115,18 +117,19 @@ function ProductCard (props) {
     return (
         <div>            
             <Card     
+                className="product-card"
                 hoverable
                 size="small"           
                 style={{ width: '100%' }}
                 cover={
                     <Link to={`/products/${props.item.id}`}>
-                        <img alt={props.item.name} src={props.item.images[0].image} style={{ width: '100%', height: 'auto' }} />
+                        <img alt={props.item.name} src={props.item.images.length > 0 ? props.item.images[0].image : blank} style={{ width: '100%', height: 'auto' }} />
                     </Link>
                 }                
                 actions={ props.type === "list" ? [
                     favorite && favorite.find(x => x.id === props.item.id) ? (
                         <Tooltip title="Хадгалсан">
-                            <HeartOutlined style={{ color: '#EA2027' }} key="save" onClick={addToSaved} />
+                            <HeartOutlined style={{ color: '#FF0000' }} key="save" onClick={addToSaved} />
                         </Tooltip>
                     ) : (
                         <Tooltip title="Хадгалах">
@@ -164,7 +167,7 @@ function ProductCard (props) {
                         </div>
                     </div>
                 </Link>
-                <Modal title={props.item.name} visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
+                <Modal title={props.item.name} visible={visible} footer={false} onCancel={() => setVisible(false)}>
                     <Typography.Title level={5}>Тайлбар:</Typography.Title>
                     <Typography.Paragraph>
                         {props.item.description}

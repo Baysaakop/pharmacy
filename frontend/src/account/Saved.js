@@ -11,7 +11,7 @@ function Saved (props) {
     }
 
     return (
-        <div style={{ padding: '16px', border: '1px solid #f0f2f5' }}>
+        <div style={{ padding: '16px', border: '1px solid #000' }}>
             <Typography.Title level={4}>Хадгалсан бүтээгдэхүүнүүд</Typography.Title>
             <Divider />
             <List

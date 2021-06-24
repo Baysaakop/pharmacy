@@ -86,19 +86,19 @@ function Cart (props) {
                         actions={[
                             <Button type="text" icon={<PlusOutlined />} onClick={() => onPlus(item)}>Нэмэх</Button>,
                             <Button type="text" icon={<MinusOutlined />} onClick={() => onMinus(item)}>Хасах</Button>,
-                            <Button type="text" icon={<DeleteOutlined />}>Устгах</Button>,                                            
+                            <Button danger type="text" icon={<DeleteOutlined />}>Устгах</Button>,                                            
                         ]}
                         extra={
                             <img
                                 width={100}
                                 alt="logo"
-                                src={item.item.images[0].image}
+                                src={item.item.images.length > 0 ? item.item.images[0].image : undefined}
                             />
                         }
                     >
                         <List.Item.Meta                                            
                             title={<Link to={`products/${item.item.id}`}>{item.item.name}</Link>}
-                            description={item.item.company.name}
+                            description={item.item.company && item.item.company !== null ? item.item.company.name : undefined}
                         />
                         <p>
                         Үнэ: {item.item.price}₮ X {item.count} ш = <span style={{ fontWeight: 'bold' }}>{item.item.price * item.count}₮ (Нийт)</span>

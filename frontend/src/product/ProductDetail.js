@@ -1,5 +1,5 @@
 import { CarOutlined, HeartOutlined, ShopOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
-import { Typography, Breadcrumb, Row, Col, Button, InputNumber, message, Divider, Tag, notification } from "antd";
+import { Typography, Breadcrumb, Row, Col, Button, InputNumber, message, Divider, Tag, notification, Carousel } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // import ProductCard from "./ProductCard";
@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import axios from "axios"; 
 import api from "../api";
 import { connect } from 'react-redux';
+import blank from './blank.jpg'
 
 function ProductDetail (props) {
 
@@ -21,6 +22,7 @@ function ProductDetail (props) {
             method: 'GET',
             url: `${api.items}/${props.match.params.id}/`,            
         }).then(res => {            
+            console.log(res.data)
             setItem(res.data)
         }).catch(err => {
             message.error("Хуудсыг дахин ачааллана уу")
@@ -157,9 +159,13 @@ function ProductDetail (props) {
                     </Breadcrumb>
                     <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
                         <Col span={8} style={{ padding: 0 }}>
-                            <div style={{ width: '100%', padding: '32px' }}>
-                                <img alt={item.name} src={item.images[0].image} style={{ width: '100%', height: 'auto' }} />
-                            </div>
+                            <Carousel autoplay>
+                                {item.images.map(element => (
+                                    <div>
+                                        <img alt={element.image} src={element.image} style={{ width: '100%', height: 'auto' }} />
+                                    </div>
+                                ))}
+                            </Carousel>                            
                         </Col>
                         <Col span={16} style={{ padding: '0 0 0 32px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -168,8 +174,7 @@ function ProductDetail (props) {
                                     <Typography.Text type="secondary" style={{ fontSize: '16px' }}>{getCategory(item.category)}</Typography.Text>
                                 </div>
                                 <div>
-                                    <Typography.Title level={3}>{item.company.name}</Typography.Title>
-                                    {/* <img alt={item.company} src={item.company.image} style={{ height: '40px', width: 'auto', objectFit: 'scale-down' }} /> */}
+                                    <Typography.Title level={3}>{item.company ? item.company : undefined}</Typography.Title>                                    
                                 </div>
                             </div>                            
                             <Divider style={{ margin: '16px 0' }} />
@@ -199,7 +204,7 @@ function ProductDetail (props) {
                                     <Tag>{tag.name}</Tag>
                                 )                                
                             })}
-                            <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px' }}>
+                            <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px', marginTop: '16px' }}>
                                 <div>
                                     <CarOutlined style={{ fontSize: '24px' }} />
                                 </div>

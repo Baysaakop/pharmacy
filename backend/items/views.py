@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from .models import Company, Category, ItemImage, Shop, Tag, Item, Post
 from .serializers import CompanySerializer, CategorySerializer, ShopSerializer, TagSerializer, ItemSerializer, ItemImageSerializer, PostSerializer
 from rest_framework import viewsets, filters
+from addresses.models import Address, City, District
 
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
@@ -54,13 +55,40 @@ class ShopViewSet(viewsets.ModelViewSet):
         if 'phone_number' in request.data:
             shop.phone_number=request.data['phone_number']
         if 'address' in request.data:
-            shop.address=request.data['address']
+            address,created=Address.objects.get_or_create(
+                city=City.objects.get(id=int(request.data['city'])),
+                district=District.objects.get(id=int(request.data['district'])),
+                section=request.data['section'],
+                address=request.data['address']
+            )
+            shop.address=address
         if 'image' in request.data:
             shop.image=request.data['image'] 
         shop.save()
         serializer = ShopSerializer(shop)
         headers = self.get_success_headers(serializer.data)        
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)        
+
+    def update(self, request, *args, **kwargs):                
+        shop = self.get_object()                                 
+        if 'name' in request.data:
+            shop.name=request.data['name']
+        if 'phone_number' in request.data:
+            shop.phone_number=request.data['phone_number']   
+        if 'address' in request.data:
+            address,created=Address.objects.get_or_create(
+                city=City.objects.get(id=int(request.data['city'])),
+                district=District.objects.get(id=int(request.data['district'])),
+                section=request.data['section'],
+                address=request.data['address']
+            )
+            shop.address=address       
+        if 'image' in request.data:
+            shop.image=request.data['image']  
+        shop.save()
+        serializer = ShopSerializer(shop)
+        headers = self.get_success_headers(serializer.data)        
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)     
 
 class ItemViewSet(viewsets.ModelViewSet):
     serializer_class = ItemSerializer
@@ -89,6 +117,11 @@ class ItemViewSet(viewsets.ModelViewSet):
             item.caution=request.data['caution']   
         if 'price' in request.data:
             item.price=request.data['price']   
+        if 'is_brand' in request.data:
+            if request.data['is_brand'] == 'true':
+                item.is_brand=True
+            else:
+                item.is_brand=False  
         if 'company' in request.data:
             item.company=Company.objects.filter(id=int(request.data['company']))[0]   
         if 'category' in request.data:
@@ -99,6 +132,10 @@ class ItemViewSet(viewsets.ModelViewSet):
             tags=request.data['tag'].split(',')
             for tag in tags:
                 item.tag.add(Tag.objects.filter(id=int(tag))[0])
+        if 'shop' in request.data:
+            shops=request.data['shop'].split(',')
+            for shop in shops:
+                item.shops.add(Shop.objects.filter(id=int(shop))[0])
         if 'image' in request.data:
             item.image=request.data['image']  
         item.save()
@@ -144,96 +181,6 @@ class ItemViewSet(viewsets.ModelViewSet):
 class ItemImageViewSet(viewsets.ModelViewSet):
     serializer_class = ItemImageSerializer
     queryset = ItemImage.objects.all()  
-
-# class FavoriteViewSet(viewsets.ModelViewSet):
-#     serializer_class = FavoriteSerializer
-#     queryset = Favorite.objects.all()
-
-#     def get_queryset(self):
-#         queryset = Favorite.objects.all()
-#         token = self.request.query_params.get('token', None)
-#         if token is not None:
-#             user = Token.objects.get(key=token).user   
-#             queryset = queryset.filter(user=user).distinct()
-#         return queryset
-
-#     def create(self, request, *args, **kwargs):              
-#         user = Token.objects.get(key=request.data['token']).user   
-#         item = Item.objects.get(id=int(request.data['item']))
-#         favorite = Favorite.objects.create(
-#             user=user            
-#         )                      
-#         favorite.items.add(item)
-#         favorite.save()
-#         serializer = FavoriteSerializer(favorite)
-#         headers = self.get_success_headers(serializer.data)        
-#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-#     def update(self, request, *args, **kwargs):                         
-#         favorite = self.get_object()                         
-#         item = Item.objects.get(id=int(request.data['item']))
-#         if item in favorite.items.all():
-#             favorite.items.remove(item)
-#         else:
-#             favorite.items.add(item)        
-#         favorite.save()
-#         serializer = FavoriteSerializer(favorite)
-#         headers = self.get_success_headers(serializer.data)        
-#         return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)     
-
-# class CartItemViewSet(viewsets.ModelViewSet):
-#     serializer_class = CartItemSerializer
-#     queryset = CartItem.objects.all()
-
-# class CartViewSet(viewsets.ModelViewSet):
-#     serializer_class = CartSerializer
-#     queryset = Cart.objects.all()
-
-#     def get_queryset(self):
-#         queryset = Cart.objects.all()
-#         token = self.request.query_params.get('token', None)
-#         if token is not None:
-#             user = Token.objects.get(key=token).user   
-#             queryset = queryset.filter(user=user).distinct()
-#         return queryset
-
-#     def create(self, request, *args, **kwargs):              
-#         user = Token.objects.get(key=request.data['token']).user   
-#         item = Item.objects.get(id=int(request.data['item']))
-#         count = int(request.data['count'])        
-#         cart = Cart.objects.create(
-#             user=user            
-#         )          
-#         cartitem = CartItem.objects.create(
-#             item=item,
-#             count=count
-#         )            
-#         cart.items.add(cartitem)
-#         cart.save()
-#         serializer = CartSerializer(cart)
-#         headers = self.get_success_headers(serializer.data)        
-#         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-#     def update(self, request, *args, **kwargs):                         
-#         cart = self.get_object()                         
-#         item = Item.objects.get(id=int(request.data['item']))
-#         count = int(request.data['count'])                
-#         is_in = False
-#         for ci in cart.items.all():
-#             if ci.item == item:
-#                 ci.count = count      
-#                 ci.save()                         
-#                 is_in = True     
-#         if is_in == False:
-#             cartitem = CartItem.objects.create(
-#                 item=item,
-#                 count=count
-#             )            
-#             cart.items.add(cartitem)                
-#         cart.save()
-#         serializer = CartSerializer(cart)
-#         headers = self.get_success_headers(serializer.data)        
-#         return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)     
 
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
