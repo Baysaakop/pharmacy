@@ -8,12 +8,14 @@ import ProductList from './product/ProductList';
 import ProductDetail from './product/ProductDetail';
 import Admin from './account/Admin';
 import About from './containers/About';
+import Contact from './containers/Contact';
 
 function BaseRouter () {
     return (
         <Switch>
             <Route exact path="/" component={Home} />
-            <Route exact path="/about" component={About} />                        
+            <Route exact path="/about" component={About} />            
+            <Route exact path="/contact" component={Contact} />            
             {/* Product */}
             <Route exact path="/products" component={ProductList} />
             <Route exact path="/products/:id" component={ProductDetail} />
