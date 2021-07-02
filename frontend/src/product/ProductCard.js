@@ -1,7 +1,7 @@
 import { EllipsisOutlined, HeartOutlined, MinusCircleOutlined, ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
 import { Card, Tooltip, Typography, Modal, message, Button } from "antd";
 import { useEffect, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios"; 
 import api from "../api";
 import blank from './blank.jpg'
@@ -120,10 +120,17 @@ function ProductCard (props) {
                 className="product-card"
                 hoverable
                 size="small"           
-                style={{ width: '100%' }}
+                // style={ props.item.is_brand === true ? { border: '1px solid black' } : { border: 'none' }}
                 cover={
                     <Link to={`/products/${props.item.id}`}>
-                        <img alt={props.item.name} src={props.item.images.length > 0 ? props.item.images[0].image : blank} style={{ width: '100%', height: 'auto' }} />
+                        <div style={{ position: 'relative' }}>
+                            <img alt={props.item.name} src={props.item.images.length > 0 ? props.item.images[0].image : blank} style={{ width: '100%', height: 'auto' }} />
+                            { props.item.is_brand === true ?
+                            <div style={{ position: 'absolute', top: '8px', right: '8px', padding: '4px', background: 'rgba(0, 0, 0, 0.75)', borderRadius: '4px', color: 'white' }}>
+                                Бренд
+                            </div>
+                            : <></>}
+                        </div>
                     </Link>
                 }                
                 actions={ props.type === "list" ? [
@@ -154,7 +161,7 @@ function ProductCard (props) {
             >
                 <Link to={`/products/${props.item.id}`}>
                     <Card.Meta 
-                        title={props.item.name}    
+                        title={<Tooltip title={props.item.name}>{props.item.name}</Tooltip>}    
                         description={getCategory(props.item.category)}                    
                     />
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>                        

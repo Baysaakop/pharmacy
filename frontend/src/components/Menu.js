@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Menu, Badge, Tooltip, message, Tag, Avatar, Typography } from 'antd';
+import { Button, Grid, Menu, Badge, Tooltip, Tag, Avatar, Typography } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, EditOutlined, HeartOutlined, MailOutlined, MenuOutlined, QuestionCircleOutlined, SettingOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';

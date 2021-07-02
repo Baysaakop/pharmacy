@@ -49,15 +49,21 @@ class ProfileViewSet(viewsets.ModelViewSet):
         if 'cart' in request.data:
             item = Item.objects.get(id=int(request.data['item']))
             count = int(request.data['count'])   
+            mode = request.data['mode']
             cartitem = profile.cart.all().filter(item=item).first()
-            if cartitem is None:
+            if mode == "create":
                 cartitem = CartItem.objects.create(
                     item=item,
                     count=count
                 )
                 profile.cart.add(cartitem)
-            else:
-                profile.cart.remove(cartitem)
+            elif mode == "remove":
+                print("remove")
+            elif mode == "add":
+                print("add")              
+            elif mode == "sub":
+                print("sub")
+            
         profile.save()
         user.save()
         serializer = ProfileSerializer(profile)

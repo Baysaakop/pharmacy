@@ -159,13 +159,16 @@ function ProductDetail (props) {
                     </Breadcrumb>
                     <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
                         <Col span={8} style={{ padding: 0 }}>
+                            {item.images.length > 0 ?
                             <Carousel autoplay>
                                 {item.images.map(element => (
                                     <div>
                                         <img alt={element.image} src={element.image} style={{ width: '100%', height: 'auto' }} />
                                     </div>
                                 ))}
-                            </Carousel>                            
+                            </Carousel>              
+                            : <img alt={item.name} src={blank} style={{ width: '100%', height: 'auto' }} />
+                            }
                         </Col>
                         <Col span={16} style={{ padding: '0 0 0 32px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

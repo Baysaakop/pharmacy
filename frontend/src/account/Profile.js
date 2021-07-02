@@ -1,4 +1,4 @@
-import { Grid, Breadcrumb, Button, Result,  Row, Col, Typography, Avatar, Statistic, Menu, Rate } from 'antd';
+import { Breadcrumb, Button, Result,  Row, Col, Typography, Avatar, Menu, Rate } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -9,11 +9,9 @@ import Saved from './Saved';
 import Logout from './Logout';
 import Cart from './Cart';
 
-const { useBreakpoint } = Grid;
 const percentages = ['2%', '3%', '4%', '5%', '6%'];
 
-function Profile (props) {
-    const screens = useBreakpoint()
+function Profile (props) {    
     const [user, setUser] = useState()
     const [key, setKey] = useState("1")
 

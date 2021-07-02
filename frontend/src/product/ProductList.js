@@ -1,4 +1,4 @@
-import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag, Radio, Space } from "antd";
+import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag, Radio, Space, Pagination } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
@@ -6,23 +6,32 @@ import axios from "axios";
 import api from "../api";
 import { connect } from 'react-redux';
 
+const { Search } = Input
 const { CheckableTag } = Tag
 
 function ProductList (props) {
     const [user, setUser] = useState()
-    const [categories, setCategories] = useState([])
-    const [selectedTags, setSelectedTags] = useState([])
-    const [tags, setTags] = useState([])
+    const [categories, setCategories] = useState()    
+    const [tags, setTags] = useState()
     const [items, setItems] = useState()
+    const [selectedTags, setSelectedTags] = useState([])
+    const [search, setSearch] = useState()
+    const [category, setCategory] = useState()
+    const [page, setPage] = useState(1)
+    const [total, setTotal] = useState()
 
     useEffect(() => {
-        if (props.token) {
+        if (props.token && !user) {
             getUser()
         }        
-        getProducts()
-        getCategories()
-        getTags()
-    }, [props.token]) // eslint-disable-line react-hooks/exhaustive-deps
+        if (!categories) {
+            getCategories()
+        }
+        if (!tags) {
+            getTags()
+        }
+        getProducts(search, category, selectedTags, page)        
+    }, [props.token, search, category, selectedTags, page]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function getUser() {
         axios({
@@ -32,20 +41,31 @@ function ProductList (props) {
                 'Content-Type': 'application/json',
                 'Authorization': `Token ${props.token}`
             }
-        }).then(res => {               
-            console.log(res.data)        
+        }).then(res => {                                 
             setUser(res.data)
         }).catch(err => {
             console.log(err)
         })
     }
 
-    function getProducts () {
+    function getProducts (search, category, selectedTags, page) {        
+        let url = `${api.items}/?`
+        if (search) {
+            url += `name=${search}`
+        }
+        if (category) {
+            url += `&category=${category}`
+        }
+        if (selectedTags && selectedTags.length > 0) {
+            url += `&tags=${selectedTags}`
+        }
+        url += `&page=${page}`
         axios({
             method: 'GET',
-            url: `${api.items}/`,            
+            url: url           
         }).then(res => {                        
             setItems(res.data.results)
+            setTotal(res.data.count)
         }).catch(err => {
             message.error("Хуудсыг дахин ачааллана уу")
         })
@@ -78,6 +98,22 @@ function ProductList (props) {
         setSelectedTags(nextSelectedTags)
     }
 
+    function onSearch (val) {
+        setSearch(val)
+    }
+
+    function onSelectCategory (e) {
+        setCategory(e.target.value)
+    }
+
+    function onPageChange (pageNum, pageSize) {        
+        setPage(pageNum)
+    }
+
+    function showTotal(total) {
+        return `Нийт ${total} бүтээгдэхүүн:`;
+    }   
+
     return (
         <div style={{ padding: '0px 10%' }}>    
             <Breadcrumb style={{ margin: '24px 0' }}>
@@ -93,17 +129,17 @@ function ProductList (props) {
             <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
                 <Col span={6} style={{ padding: ' 0 24px 0 0' }}>
                     <div style={{ width: '100%', border: '1px solid #f0f0f0', padding: '16px' }}>
-                        <Typography.Title level={5}>Нэрээр хайх:</Typography.Title>
-                        <Input />
+                        <Typography.Title level={5}>Бүтээгдэхүүн хайх:</Typography.Title>
+                        <Search placeholder="Бүтээгдэхүүний нэр" onSearch={onSearch} enterButton />
                         <Typography.Title level={5} style={{ marginTop: '16px' }}>Ангилал:</Typography.Title>
-                        <Radio.Group>
+                        <Radio.Group onChange={onSelectCategory}>
                             <Space direction="vertical">
                                 {categories ? categories.map(cat => (
                                     <Radio value={cat.id}>{cat.name}</Radio>
                                 )) : <></>}
                             </Space>
                         </Radio.Group>
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Tags:</Typography.Title>
+                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Төрөл:</Typography.Title>
                         {tags ? tags.map(tag => (
                             <CheckableTag
                                 key={tag.id}
@@ -112,8 +148,7 @@ function ProductList (props) {
                             >
                                 {tag.name}
                             </CheckableTag>
-                        )) : <></>}
-                        <Typography.Title level={5} style={{ marginTop: '16px' }}>Үйлдвэрлэгч:</Typography.Title>                        
+                        )) : <></>}                        
                     </div>                    
                 </Col>
                 <Col span={18} style={{ padding: 0 }}>
@@ -133,6 +168,15 @@ function ProductList (props) {
                                 <ProductCard history={props.history} item={item} user={user} type="list" />
                             </List.Item>
                         )}
+                    />
+                    <Pagination
+                        current={page}
+                        total={total}
+                        pageSize={24}
+                        showSizeChanger={false}
+                        showTotal={showTotal}
+                        size="small"
+                        onChange={onPageChange}
                     />
                 </Col>
             </Row>

@@ -97,8 +97,15 @@ class ItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Item.objects.all().order_by('-created_at')
         name = self.request.query_params.get('name', None)
+        category = self.request.query_params.get('category', None)
+        tags = self.request.query_params.get('tags', None)        
         if name is not None:
             queryset = queryset.filter(name__icontains=name).distinct()
+        if category is not None:
+            queryset = queryset.filter(category__id=category).distinct()
+        if tags is not None:
+            for tag in tags.split(","):
+                queryset = queryset.filter(tag__id=tag).distinct()            
         return queryset
 
     def create(self, request, *args, **kwargs):              

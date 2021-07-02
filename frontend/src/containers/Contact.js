@@ -1,6 +1,5 @@
 import { Row, Col, Typography } from 'antd'
 import React from 'react'
-import contact from './contact.jpg'
 import {
     MobileOutlined,
     MailOutlined,
@@ -10,7 +9,7 @@ import {
 
 function Contact () {
     return (
-        <div style={{ padding: '24px 10%' }}>            
+        <div style={{ padding: '24px 10%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
             <Row gutter={[16, 16]}>
                 <Col xs={24} sm={24} md={24} lg={8}>
                     <div style={{ padding: '16px', border: '2px solid black', borderRadius: '5px' }}>
@@ -24,11 +23,10 @@ function Contact () {
                         <p style={{ fontSize: '18px', marginTop: '16px' }}><EnvironmentOutlined /> ХУД 120 мянгат 1-р хороо Энхтайван хотхон 46А байр 1-р давхар ИРМҮҮН-АЗ эмийн сан, Улаанбаатар, Монгол</p>
                     </div>                    
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={16}>
-                    {/* <img alt="contact" src={contact} style={{ width: '100%', height: 'auto' }} /> */}
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1337.3252686079093!2d106.9093577552439!3d47.90444883155231!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5d9693b49ec74379%3A0xe56d5403e78b37b1!2sKhoroo%201%2C%20Ulaanbaatar!5e0!3m2!1sen!2smn!4v1624883166995!5m2!1sen!2smn" allowfullscreen="" loading="lazy" style={{ width: '100%', height: '400px', border: 0, marginTop: '8px' }}></iframe>
+                <Col xs={24} sm={24} md={24} lg={16}>                    
+                    <iframe title="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1337.3252686079093!2d106.9093577552439!3d47.90444883155231!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5d9693b49ec74379%3A0xe56d5403e78b37b1!2sKhoroo%201%2C%20Ulaanbaatar!5e0!3m2!1sen!2smn!4v1624883166995!5m2!1sen!2smn" allowfullscreen="" loading="lazy" style={{ width: '100%', height: '400px', border: 0, marginTop: '8px' }}></iframe>
                 </Col>
-            </Row>
+            </Row>                   
         </div>
     )
 }
