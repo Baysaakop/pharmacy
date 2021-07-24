@@ -115,8 +115,8 @@ function ProductList (props) {
     }   
 
     return (
-        <div style={{ padding: '0px 10%' }}>    
-            <Breadcrumb style={{ margin: '24px 0' }}>
+        <div>    
+            <Breadcrumb>
                 <Breadcrumb.Item>
                     <Link to="/">
                         Нүүр хуудас
@@ -126,9 +126,9 @@ function ProductList (props) {
                     Эмийн сан
                 </Breadcrumb.Item>
             </Breadcrumb>
-            <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
-                <Col span={6} style={{ padding: ' 0 24px 0 0' }}>
-                    <div style={{ width: '100%', border: '1px solid #f0f0f0', padding: '16px' }}>
+            <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
+                <Col xs={24} sm={24} md={24} lg={6}>
+                    <div style={{ width: '100%', padding: '16px', background: '#fff', borderRadius: '2px' }}>
                         <Typography.Title level={5}>Бүтээгдэхүүн хайх:</Typography.Title>
                         <Search placeholder="Бүтээгдэхүүний нэр" onSearch={onSearch} enterButton />
                         <Typography.Title level={5} style={{ marginTop: '16px' }}>Ангилал:</Typography.Title>
@@ -151,7 +151,7 @@ function ProductList (props) {
                         )) : <></>}                        
                     </div>                    
                 </Col>
-                <Col span={18} style={{ padding: 0 }}>
+                <Col xs={24} sm={24} md={24} lg={18}>
                     <List
                         grid={{
                             gutter: 16,

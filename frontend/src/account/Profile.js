@@ -8,6 +8,7 @@ import { CloseCircleOutlined, GoldOutlined, HeartOutlined, ScheduleOutlined, Sho
 import Saved from './Saved';
 import Logout from './Logout';
 import Cart from './Cart';
+import OrderHistory from './OrderHistory';
 
 const percentages = ['2%', '3%', '4%', '5%', '6%'];
 
@@ -49,7 +50,7 @@ function Profile (props) {
     }
 
     return (
-        <div style={{ margin: '24px 10%' }}>
+        <div>
             <Breadcrumb>
                 <Breadcrumb.Item>
                     <a href="/">Нүүр хуудас</a>
@@ -58,13 +59,13 @@ function Profile (props) {
                     Профайл
                 </Breadcrumb.Item>
             </Breadcrumb>
-            <div className="container" style={{ margin: '24px 0' }}>
+            <div className="container" style={{ marginTop: '24px' }}>
             {user ? (
                 <Row gutter={[16, 16]}>
-                    <Col span={6}>
-                        <div style={{ border: '1px solid #000', padding: '16px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '16px' }}>
-                                <Avatar size={48} shape="square" style={{ backgroundColor: '#FFF', color: '#000', border: '2px solid #000', fontWeight: 'bold' }}>{user.username.toString().slice(0, 1)}</Avatar>
+                    <Col xs={24} sm={24} md={24} lg={6}>
+                        <div style={{ background: '#fff', borderRadius: '2px', padding: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '16px' }}>                                
+                                <Avatar size={48} shape="square" icon={<UserOutlined />} style={{ background: '#ff4d4f' }} />
                                 <div style={{ marginLeft: '16px' }}>
                                     <Typography.Title level={4} style={{ margin: 0 }}>{user.username}</Typography.Title>
                                     <Typography.Text>{user.email}</Typography.Text>
@@ -74,7 +75,7 @@ function Profile (props) {
                             <Rate disabled count={5} value={4} tooltips={percentages} />                            
                             <span className="ant-rate-text" style={{ fontWeight: 'bold' }}>- 5%</span>
                             <Typography.Title level={5} style={{ margin: 0 }}>Урамшууллын оноо</Typography.Title>  
-                            <Typography.Title level={4} style={{ margin: 0 }}><GoldOutlined /> {formatNumber(37113.18)}</Typography.Title>                                                                         
+                            <Typography.Title level={4} style={{ margin: 0 }}><GoldOutlined /> {formatNumber(7319)}</Typography.Title>                                                                         
                             <Menu mode="inline" defaultSelectedKeys={key} style={{ backgroundColor: 'rgba(0, 0, 0, 0)', marginTop: '16px' }} onClick={onSelect}>
                                 <Menu.Item icon={<UserOutlined style={{ fontSize: '18px' }} />} key="1">Хувийн мэдээлэл</Menu.Item>
                                 <Menu.Item icon={<HeartOutlined style={{ fontSize: '18px' }} />} key="2">Хадгалсан</Menu.Item>
@@ -84,33 +85,20 @@ function Profile (props) {
                             </Menu>
                         </div>
                     </Col>
-                    <Col span={18}>
+                    <Col xs={24} sm={24} md={24} lg={18}>
                         { key === "1" ?
                             <AccountDetail user={user} token={props.token} />
                         : key === "2" ?
                             <Saved items={user.profile.favorite} user={user} />
                         : key === "3" ? 
-                            <Cart items={user.profile.cart} user={user} />
+                            <Cart items={user.profile.cart} user={user} />                            
                         : key === "4" ?
-                            <Typography.Title>Order history</Typography.Title>
+                            <OrderHistory user={user} />
                         : key === "5" ? 
                             <Logout />
                         : <></>}
                     </Col>
-                </Row>
-                // <Tabs tabPosition={screens.xs ? "top" : "left"} style={{ minHeight: '80vh', padding: '8px' }}>
-                //     <Tabs.TabPane tab="Account details" key="1">
-                //         <div style={{ padding: '8px' }}>
-                //             <AccountDetail user={user ? user : undefined} token={props.token} />
-                //         </div>
-                //     </Tabs.TabPane>
-                //     <Tabs.TabPane tab="User activity" key="2">
-                //         <div style={{ padding: '8px' }}>User activity</div>                        
-                //     </Tabs.TabPane>
-                //     <Tabs.TabPane tab="Data" key="3">
-                //         <div style={{ padding: '8px' }}>Data</div>        
-                //     </Tabs.TabPane>
-                // </Tabs>                
+                </Row>                           
             ) : (
                 <Result
                     status="403"

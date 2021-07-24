@@ -1,11 +1,13 @@
 import { EllipsisOutlined, HeartOutlined, MinusCircleOutlined, ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
-import { Card, Tooltip, Typography, Modal, message, Button } from "antd";
+import { Card, Tooltip, Typography, Modal, message, Button, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios"; 
 import api from "../api";
 import blank from './blank.jpg'
 import './ProductCard.css'
+import { connect } from 'react-redux';
+import * as actions from '../store/actions/auth';
 
 function ProductCard (props) {
     const [visible, setVisible] = useState(false)
@@ -46,8 +48,8 @@ function ProductCard (props) {
         }
     }
 
-    function addToCart() {        
-        if (props.user) {  
+    function addToCart(mode) {        
+        if (props.user) {                          
             axios({
                 method: 'PUT',
                 url: `${api.profiles}/${props.user.profile.id}/`,
@@ -56,13 +58,15 @@ function ProductCard (props) {
                 },
                 data: {
                     cart: true,
+                    mode: mode,
                     item: props.item.id,
                     count: 1                                               
                 }
             })            
             .then(res => {
                 if (res.status === 200 || res.status === 201) {                                  
-                    setCart(res.data.cart)          
+                    setCart(res.data.cart)            
+                    props.onUpdateCart(res.data.cart)                  
                 }                                                         
             })
             .catch(err => {                      
@@ -119,17 +123,19 @@ function ProductCard (props) {
             <Card     
                 className="product-card"
                 hoverable
-                size="small"           
-                // style={ props.item.is_brand === true ? { border: '1px solid black' } : { border: 'none' }}
+                size="small"                           
                 cover={
                     <Link to={`/products/${props.item.id}`}>
                         <div style={{ position: 'relative' }}>
-                            <img alt={props.item.name} src={props.item.images.length > 0 ? props.item.images[0].image : blank} style={{ width: '100%', height: 'auto' }} />
+                            <img 
+                                alt={props.item.name} 
+                                src={props.item.images.length > 0 ? props.item.images[0].image : blank} 
+                                style={{ width: '100%', height: 'auto' }} 
+                            />
+                            <Tag color="#2d2d2d" style={{ position: 'absolute', top: '8px', left: '8px' }}>Dseabi</Tag>
                             { props.item.is_brand === true ?
-                            <div style={{ position: 'absolute', top: '8px', right: '8px', padding: '4px', background: 'rgba(0, 0, 0, 0.75)', borderRadius: '4px', color: 'white' }}>
-                                Бренд
-                            </div>
-                            : <></>}
+                                <Tag color="volcano" style={{ position: 'absolute', top: '8px', right: '0px' }}>Брэнд</Tag>
+                            : <></>}                            
                         </div>
                     </Link>
                 }                
@@ -145,11 +151,11 @@ function ProductCard (props) {
                     ),               
                     cart && cart.find(x => x.item.id === props.item.id) ? (                        
                         <Tooltip title="Сагсанд байгаа">
-                            <ShoppingCartOutlined style={{ color: '#000' }} key="cart" onClick={addToCart} />
+                            <ShoppingCartOutlined style={{ color: '#000' }} key="cart" onClick={() => addToCart("delete")} />
                         </Tooltip>                        
                     ) : (
                         <Tooltip title="Сагслах">
-                            <ShoppingCartOutlined key="cart" onClick={addToCart} />
+                            <ShoppingCartOutlined key="cart" onClick={() => addToCart("create")} />
                         </Tooltip>
                     ),                         
                     <Tooltip title="Дэлгэрэнгүй">
@@ -170,7 +176,7 @@ function ProductCard (props) {
                         </div>
                         <div>
                             <StarFilled style={{ color: '#f9ca24' }} />
-                            <Typography.Text> {props.item.rating / 10}</Typography.Text>
+                            <Typography.Text> 4.7</Typography.Text>
                         </div>
                     </div>
                 </Link>
@@ -201,4 +207,10 @@ function ProductCard (props) {
     )
 }
 
-export default (ProductCard)
+const mapDispatchToProps = dispatch => {
+    return {
+        onUpdateCart: (cart) => dispatch(actions.updateCart(cart))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(ProductCard);

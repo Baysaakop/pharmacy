@@ -3,36 +3,47 @@ body {
 }
 
 .ant-layout {
-    background: #fff;
+    background: #f0f2f5;
     color: rgba(0, 0, 0, 0.85);
 }
 
 .ant-layout-header {
-    background: #f0f2f5;
+    /* background: #f0f2f5; */
     /* rgb(38,222,129) */
+    background: #fff;    
+    border-bottom: 1px solid #dedede;    
     display: inline-block;
     z-index: 99;
     position: fixed;              
     padding: 0;
     transition: background-color 0.3s ease-out;
-    height: 80px;   
+    height: 120px;   
     width: 100%;
+    line-height: unset;    
 }
 
 .ant-layout-content {
     min-height: 80vh;
-    margin-top: 80px;
+    margin-top: 120px;
 }
 
 .ant-layout-footer {
-    background: #f0f2f5;
+    /* background: #f0f2f5; */
+    background: #fff;    
+    border-top: 1px solid #dedede;
     padding: 0%;
+    margin-top: 16px;
 }
 
+.ant-btn-dangerous.ant-btn-text:hover,
 .ant-btn-text:hover {
     background: #dedede;
 }
 
 .ant-input:disabled {    
     color: rgba(0, 0, 0, 0.75);
+}
+
+.ant-list-vertical .ant-list-item-action > li {
+    padding: 0;
 }

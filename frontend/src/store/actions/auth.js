@@ -55,3 +55,11 @@ export const authFacebook = (access_token, email, name, picture) => {
         })                  
     }
 }
+
+export const updateCart = (cart) => {        
+    console.log(cart)
+    return {
+        type: actionTypes.UPDATE_CART,
+        cart: cart
+    };
+}

@@ -46,24 +46,26 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 profile.favorite.remove(item)
             else:
                 profile.favorite.add(item)
-        if 'cart' in request.data:
+        if 'cart' in request.data:            
             item = Item.objects.get(id=int(request.data['item']))
             count = int(request.data['count'])   
-            mode = request.data['mode']
-            cartitem = profile.cart.all().filter(item=item).first()
+            mode = request.data['mode']            
             if mode == "create":
                 cartitem = CartItem.objects.create(
                     item=item,
                     count=count
                 )
                 profile.cart.add(cartitem)
-            elif mode == "remove":
-                print("remove")
+            elif mode == "delete":
+                profile.cart.all().filter(item=item).first().delete()                                
             elif mode == "add":
-                print("add")              
+                cartitem = profile.cart.all().filter(item=item).first()
+                cartitem.count = cartitem.count + 1
+                cartitem.save()                
             elif mode == "sub":
-                print("sub")
-            
+                cartitem = profile.cart.all().filter(item=item).first()
+                cartitem.count = cartitem.count - 1
+                cartitem.save()                            
         profile.save()
         user.save()
         serializer = ProfileSerializer(profile)

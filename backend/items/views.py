@@ -101,6 +101,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         tags = self.request.query_params.get('tags', None)        
         if name is not None:
             queryset = queryset.filter(name__icontains=name).distinct()
+            # queryset = queryset.filter(Q(name__icontains=name) | Q(tag__name=name)).distinct()
         if category is not None:
             queryset = queryset.filter(category__id=category).distinct()
         if tags is not None:

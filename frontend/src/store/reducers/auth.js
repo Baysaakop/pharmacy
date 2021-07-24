@@ -5,6 +5,7 @@ const initialState = {
     token: localStorage.getItem('token'),    
     error: null,
     loading: false,
+    cart: null
 }
 
 const authStart = (state, action) => {
@@ -36,6 +37,12 @@ const authLogout = (state, action) => {
     });
 }
 
+const updateCart = (state, action) => {
+    return updateObject(state, {
+        cart: action.cart,
+    });
+}
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.AUTH_START:
@@ -46,6 +53,8 @@ const reducer = (state = initialState, action) => {
             return authFail(state, action);
         case actionTypes.AUTH_LOGOUT:
             return authLogout(state, action);         
+        case actionTypes.UPDATE_CART:
+            return updateCart(state, action);
         default:
             return state;
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Menu, Badge, Tooltip, Tag, Avatar, Typography } from 'antd';
+import { Button, Grid, Menu, Badge, Tooltip, Tag, Avatar, Typography, Input, Statistic } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, EditOutlined, HeartOutlined, MailOutlined, MenuOutlined, QuestionCircleOutlined, SettingOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { BellOutlined, CloseCircleOutlined, CoffeeOutlined, CrownOutlined, DatabaseOutlined, EditOutlined, HeartOutlined, InfoCircleOutlined, MailOutlined, MenuOutlined, PhoneOutlined, QuestionCircleOutlined, ReadOutlined, ShopOutlined, ShoppingCartOutlined, StarOutlined, ThunderboltOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import * as actions from '../store/actions/auth';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import api from '../api';
 import './Menu.css'
 import logo from './logo.png';
 
-const { SubMenu, Item } = Menu;
+const { SubMenu } = Menu;
 const { useBreakpoint } = Grid;
 
 const styleHeaderWeb = {
@@ -35,15 +35,12 @@ const styleMenuWeb = {
     borderBottom: '0'
 }
 
-const styleMenuItem = {
-    fontSize: '16px'    
-}
-
 function CustomMenu (props) {    
     const screens = useBreakpoint()
     const [current, setCurrent] = useState('home')
     const [collapsed, setCollapsed] = useState(true)
-    const [user, setUser] = useState()
+    const [user, setUser] = useState()    
+    const [cart, setCart] = useState([])
 
     useEffect(() => {
         const menuItem = props.location.pathname.toString().split('/')[1]
@@ -51,7 +48,11 @@ function CustomMenu (props) {
         if (props.token && props.token !== null && !user) {
             getUser()
         }
-    }, [props.location, props.token]) // eslint-disable-line react-hooks/exhaustive-deps
+        if (props.cart && props.cart !== null && props.cart.length !== cart.length) {
+            setCart(props.cart)
+            getUser()
+        }
+    }, [props.location, props.token, props.cart]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function getUser () {
         axios({
@@ -84,137 +85,155 @@ function CustomMenu (props) {
                 <div>
                     <div style={styleHeaderMobile}>
                         <Link to="/">
-                            <div style={{ color: '#000', fontSize: '24px', fontWeight: 'bold' }}>                        
-                                LOGO                        
-                            </div>        
+                            <Avatar size={48} src={logo} style={{ marginBottom: '8px', marginRight: '4px' }} />
+                            <Typography.Text style={{ fontWeight: 'bold', fontSize: '24px', marginRight: '16px' }}>Ирмүүн аз</Typography.Text>
                         </Link>
                         <Button type="primary" onClick={handleMenuCollapsed} style={ props.darkMode ? { background: '#161b22', color: '#fff', border: '1px solid #fff' } : { background: '#fff', color: '#000', border: '1px solid #000' }}>
                             <MenuOutlined />
                         </Button>
                     </div>
                     <Menu 
-                        theme={props.darkMode ? "dark" : "light"} 
+                        theme="light"
                         mode="inline" 
                         hidden={collapsed} 
                         onClick={handleMenuClick}
                         selectedKeys={[current]}
                     >                
-                        <Item key="items" icon={<CoffeeOutlined style={{ fontSize: '18px' }} />} style={styleMenuItem} >
-                            <Link to="/items">Items</Link>
-                        </Item>
-                        <Item key="help" icon={<QuestionCircleOutlined style={{ fontSize: '18px' }} />} style={styleMenuItem} >
-                            <Link to="/help">Help</Link>
-                        </Item>
-                        <Item key="contact" icon={<MailOutlined style={{ fontSize: '18px' }} />} style={styleMenuItem}>
-                            <Link to="/contact">Contact</Link>
-                        </Item>                   
-                        { user && user !== null ? (
-                            <SubMenu key="account" icon={<UserOutlined style={{ fontSize: '18px' }} />} style={styleMenuItem} title={user.username}>
-                                <Item key="profile" style={styleMenuItem} icon={<UserOutlined style={{ fontSize: '16px' }} />}>
-                                    <a href="/profile">Profile</a>                
-                                </Item>
-                                <Item key="notification" style={styleMenuItem} icon={<BellOutlined style={{ fontSize: '16px' }} />}>
-                                    <a href="/notification">Notification</a>
-                                </Item>
-                                <Item key="newpost" style={styleMenuItem} icon={<EditOutlined style={{ fontSize: '16px' }} />}>
-                                    <a href="/newpost">New Post</a>
-                                </Item>            
-                                <Item key="logout" style={styleMenuItem} icon={<CloseCircleOutlined style={{ fontSize: '16px' }} />}>
-                                    <a href="logout">Log Out</a>
-                                </Item>   
-                            </SubMenu> 
+                        <Menu.Item key="about" style={{ fontSize: '16px' }} icon={<InfoCircleOutlined />} >
+                            <Link to="/about">Бидний тухай</Link>
+                        </Menu.Item>             
+                        <Menu.Item key="products" style={{ fontSize: '16px' }} icon={<ShopOutlined />}>
+                            <Link to="/products">Эмийн сан</Link>
+                        </Menu.Item>
+                        <Menu.Item key="help" style={{ fontSize: '16px' }} icon={<ReadOutlined />}>
+                            <Link to="/help">Мэдээлэл</Link>
+                        </Menu.Item>
+                        <Menu.Item key="contact" style={{ fontSize: '16px' }} icon={<PhoneOutlined />}>
+                            <Link to="/contact">Холбогдох</Link>
+                        </Menu.Item>      
+                        <Menu.Item key="saved" style={{ fontSize: '16px' }} icon={<HeartOutlined />}>
+                            <Link to="/profile?key=saved" style={{ width: '100%' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>Хадгалсан бүтээгдэхүүн</div>
+                                    <Avatar shape="square" style={{ background: 'red', color: 'white' }}>
+                                    {user && user.profile.favorite.length ? user.profile.favorite.length : 0}
+                                    </Avatar>
+                                </div>
+                            </Link>
+                        </Menu.Item>      
+                        <Menu.Item key="cart" style={{ fontSize: '16px' }} icon={<ShoppingCartOutlined />}>
+                            <Link to="/profile?key=cart" style={{ width: '100%' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>Таны сагс</div>
+                                    <Avatar shape="square" style={{ background: 'red', color: 'white' }}>
+                                    {user && user.profile.cart.length ? user.profile.cart.length : 0}
+                                    </Avatar>
+                                </div>
+                            </Link>
+                        </Menu.Item>      
+                        { user ? (
+                            <Menu.Item key="profile" style={{ fontSize: '16px' }} icon={<UserOutlined />}>
+                                <Link to="/profile" style={{ width: '100%' }}>
+                                    Профайл
+                                </Link>
+                            </Menu.Item>    
                         ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', padding: '16px' }}>
-                                <Button href="/login" size="large" type="default" style={ props.darkMode ? { background: '#161b22', color: '#fff', fontSize: '18px', marginRight: '8px' } : { fontSize: '18px', marginRight: '8px' }}>Login</Button>
-                                <Button href="/signup" size="large" type="primary" style={{ fontSize: '18px' }}>Sign Up</Button>
-                            </div>
-                        ) }                                                                             
+                            <Menu.Item key="login" style={{ fontSize: '16px' }} icon={<UserOutlined />}>
+                                <Link to="/login" style={{ width: '100%' }}>
+                                    Нэвтрэх
+                                </Link>
+                            </Menu.Item>   
+                        )}  
+                        {/* <Menu.Item key="brandproducts">
+                            <Link to="/brandproducts">
+                                <Tag color="#e84118" style={{ fontSize: '16px', padding: '8px' }}>                                    
+                                Брэнд бүтээгдэхүүн
+                                </Tag>
+                            </Link>
+                        </Menu.Item> */}                        
                     </Menu>
                 </div>
             ) : (
-                <div style={styleHeaderWeb}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <Link to="/">
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginRight: '16px' }}>
-                                <div>
-                                    <Avatar size={48} src={logo} style={{ marginBottom: '4px', marginRight: '2px' }} />                            
-                                </div>
-                                <div>
-                                    <Typography.Text style={{ fontWeight: 'bold', fontSize: '24px' }}>Ирмүүн аз</Typography.Text>
-                                </div>
-                            </div>                                                        
-                        </Link>
-                        <Menu 
-                            theme="light"
-                            mode="horizontal" 
-                            onClick={handleMenuClick} 
-                            selectedKeys={[current]} 
-                            style={styleMenuWeb}
-                        >   
-                            <Menu.Item key="about" style={styleMenuItem} >
-                                <Link to="/about">Бидний тухай</Link>
-                            </Menu.Item>             
-                            <Menu.Item key="products" style={styleMenuItem} >
-                                <Link to="/products">Эмийн сан</Link>
-                            </Menu.Item>
-                            <Menu.Item key="help" style={styleMenuItem} >
-                                <Link to="/help">Мэдээлэл</Link>
-                            </Menu.Item>
-                            <Menu.Item key="contact" style={styleMenuItem}>
-                                <Link to="/contact">Холбоо барих</Link>
-                            </Menu.Item>  
-                            <Menu.Item key="brandproducts" style={styleMenuItem}>
-                                <Link to="/brandproducts">
-                                    <Tag color="#e84118" style={{ fontSize: '16px', padding: '8px' }}>
-                                    {/* БРЭНД БҮТЭЭГДЭХҮҮН */}
-                                    Брэнд бүтээгдэхүүн
-                                    </Tag>
-                                </Link>
-                            </Menu.Item>                                                                      
-                        </Menu>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                        <div style={{ marginRight: '16px' }}>
+                <div>
+                    <div style={{ height: '80px', width: '100%', borderBottom: '1px solid #dedede', padding: '0 10%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className="logo">
+                            <Link to="/">
+                                <Avatar size={48} src={logo} style={{ marginBottom: '8px', marginRight: '4px' }} />
+                                <Typography.Text style={{ fontWeight: 'bold', fontSize: '24px', marginRight: '16px' }}>Ирмүүн аз</Typography.Text>
+                            </Link>
+                        </div>
+                        <div className="user" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                            <Input.Search placeholder="Бүтээгдэхүүн хайх..." style={{ width: '300px' }} />
                             <Link to="/profile?key=saved">
                                 <Badge count={user && user.profile.favorite.length ? user.profile.favorite.length : 0} overflowCount={9} size="default" >
-                                    <Tooltip title="Хадгалсан">
-                                        <Button size="large" type="text" icon={<HeartOutlined />} />
+                                    <Tooltip title="Хадгалсан бүтээгдэхүүн">                                               
+                                        <Button size="middle" icon={<HeartOutlined />} style={{ marginLeft: '12px' }} />                                                                    
                                     </Tooltip>
                                 </Badge>
-                            </Link>
-                        </div>                        
-                        <div style={{ marginRight: '16px' }}>
+                            </Link>                                               
                             <Link to="/profile?key=cart">
                                 <Badge count={user && user.profile.cart.length ? user.profile.cart.length : 0} overflowCount={9} size="default" >
-                                    <Tooltip title="Сагс">
-                                        <Button size="large" type="text" icon={<ShoppingCartOutlined />} />
+                                    <Tooltip title="Таны сагс">
+                                        <Button size="middle" icon={<ShoppingCartOutlined />} style={{ marginLeft: '12px' }} />                                        
                                     </Tooltip>
                                 </Badge>
-                            </Link>
-                        </div> 
-                        { user ? (
-                            <>
-                                {parseInt(user.profile.role) < 3 ? (
-                                    <Link to="/admin">
-                                        <Tooltip title="Тохиргоо">
-                                            <Button size="large" type="text" icon={<SettingOutlined />} style={{ marginRight: '8px' }} />
+                            </Link>                        
+                            { user ? (
+                                <>
+                                    {/* {parseInt(user.profile.role) < 3 ? (
+                                        <Link to="/admin">
+                                            <Tooltip title="Ажилтан">                                           
+                                                <Button size="middle" icon={<DatabaseOutlined />} style={{ marginLeft: '12px' }} />
+                                            </Tooltip>
+                                        </Link>
+                                    ) : (<></>)} */}
+                                    <Link to="/profile">
+                                        <Tooltip title="Профайл">                                        
+                                            <Button danger type="primary" size="middle" icon={<UserOutlined />} style={{ marginLeft: '12px' }} />
                                         </Tooltip>
-                                    </Link>
-                                ) : (<></>)}
-                                <Link to="/profile">
-                                    <Tooltip title="Профайл">
-                                        <Button size="large" type="text" style={{ marginLeft: '8px', width: '40px', height: '40px', fontWeight: 'bold', border: '2px solid black' }}>{user.username.toString().slice(0, 1)}</Button>  
+                                    </Link> 
+                                    <div style={{ marginLeft: '12px' }}>
+                                        <div style={{ margin: 0, color: '#8e8e8e', fontSize: '12px' }}>Таны хэтэвч</div>      
+                                        <div style={{ margin: 0, fontWeight: 'bold' }}>₮8,213</div>                       
+                                    </div>                                                   
+                                </>
+                            ) : (
+                                <Link to="/login">
+                                    <Tooltip title="Нэвтрэх">
+                                        <Button size="middle" icon={<UserOutlined />} style={{ marginLeft: '12px' }}>Нэвтрэх</Button>                                                
                                     </Tooltip>
-                                </Link>                            
-                            </>
-                        ) : (
-                            <Link to="/login">
-                                <Tooltip title="Нэвтрэх">
-                                    <Button size="large" type="text" icon={<UserOutlined />} />                                                
-                                </Tooltip>
-                            </Link>  
-                        )}                                                                     
+                                </Link>  
+                            )}                                                                     
+                        </div>
                     </div>
+                    <div style={{ height: '40px', width: '100%', padding: '0 10%', border: 0 }}>
+                        <Menu                         
+                            mode="horizontal" 
+                            onClick={handleMenuClick} 
+                            selectedKeys={[current]}        
+                            style={{ lineHeight: '36px', border: 0 }}                 
+                        >   
+                            <Menu.Item key="brandproducts" style={{ margin: 0 }}>
+                                <Link to="/brandproducts">
+                                    <Tag color="#e84118" style={{ fontSize: '14px', padding: '3px 8px' }}>                                    
+                                    <StarOutlined style={{ marginRight: '4px' }} /> Брэнд бүтээгдэхүүн
+                                    </Tag>
+                                </Link>
+                            </Menu.Item>         
+                            <Menu.Item key="about" icon={<InfoCircleOutlined />} >
+                                <Link to="/about">Бидний тухай</Link>
+                            </Menu.Item>             
+                            <Menu.Item key="products" icon={<ShopOutlined />} >
+                                <Link to="/products">Эмийн сан</Link>
+                            </Menu.Item>
+                            <Menu.Item key="help" icon={<ReadOutlined />}>
+                                <Link to="/help">Мэдээлэл</Link>
+                            </Menu.Item>
+                            <Menu.Item key="contact" icon={<PhoneOutlined />}>
+                                <Link to="/contact">Холбогдох</Link>
+                            </Menu.Item>                 
+                        </Menu>
+                    </div>                    
                 </div>
             )}                        
         </div>
@@ -223,7 +242,8 @@ function CustomMenu (props) {
 
 const mapStateToProps = state => {
     return {
-        token: state.token
+        token: state.token,
+        cart: state.cart
     }
 }
 

@@ -16,10 +16,10 @@ const Logout = (props) => {
     }
 
     return (
-        <div style={{ padding: '16px', border: '1px solid #f0f2f5' }}>
+        <div style={{ background: '#fff', borderRadius: '2px', padding: '16px' }}>
             <Typography.Title level={4}>Системээс гарах</Typography.Title>
             <Divider />
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '350px' }}>
                 <Result
                         status="warning"
                         title="Системээс гарахдаа итгэлтэй байна уу?"

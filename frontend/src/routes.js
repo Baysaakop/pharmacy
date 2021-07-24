@@ -9,6 +9,7 @@ import ProductDetail from './product/ProductDetail';
 import Admin from './account/Admin';
 import About from './containers/About';
 import Contact from './containers/Contact';
+import ProductShop from './product/ProductShop';
 
 function BaseRouter () {
     return (
@@ -19,6 +20,8 @@ function BaseRouter () {
             {/* Product */}
             <Route exact path="/products" component={ProductList} />
             <Route exact path="/products/:id" component={ProductDetail} />
+            <Route exact path="/productshop/:id" component={ProductShop} />
+            <Route exact path="/brandproducts" component={ProductList} />
             {/* Posts urls */}
             <Route exact path="/newpost" component={PostCreate} />
             {/* User urls */}

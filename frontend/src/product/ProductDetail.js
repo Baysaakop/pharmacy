@@ -1,21 +1,24 @@
-import { CarOutlined, HeartOutlined, ShopOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
-import { Typography, Breadcrumb, Row, Col, Button, InputNumber, message, Divider, Tag, notification, Carousel } from "antd";
+import { CarOutlined, CreditCardOutlined, HeartOutlined, ShopOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
+import { Grid, Typography, Breadcrumb, Row, Col, Button, InputNumber, message, Divider, Tag, notification, Carousel, Avatar } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import ProductCard from "./ProductCard";
-// import InfiniteCarousel from 'react-leaf-carousel';
+import ProductCard from "./ProductCard";
+import InfiniteCarousel from 'react-leaf-carousel';
 import axios from "axios"; 
 import api from "../api";
 import { connect } from 'react-redux';
 import blank from './blank.jpg'
 
-function ProductDetail (props) {
+const { useBreakpoint } = Grid
 
+function ProductDetail (props) {
+    const screens = useBreakpoint()
     const [item, setItem] = useState()    
     const [count, setCount] = useState(1)
     const [user, setUser] = useState()
     const [favorite, setFavorite] = useState()
     const [cart, setCart] = useState()
+    const [suggestedItems, setSuggestedItems] = useState()
 
     useEffect(() => {
         axios({
@@ -30,6 +33,7 @@ function ProductDetail (props) {
         if (props.token) {
             getUser()
         }
+        getSuggestedProducts()
     }, [props.match.params.id]) // eslint-disable-line react-hooks/exhaustive-deps    
 
     function getUser() {
@@ -59,6 +63,17 @@ function ProductDetail (props) {
             res.push(element.name)
         })
         return res.toString()
+    }
+
+    function getSuggestedProducts() {
+        axios({
+            method: 'GET',
+            url: api.items           
+        }).then(res => {                        
+            setSuggestedItems(res.data.results)            
+        }).catch(err => {
+            message.error("Хуудсыг дахин ачааллана уу")
+        })
     }
 
     function addToSaved () {
@@ -99,7 +114,7 @@ function ProductDetail (props) {
         }        
     }
 
-    function addToCart() {       
+    function addToCart(mode) {       
         if (user) {  
             axios({
                 method: 'PUT',
@@ -109,6 +124,7 @@ function ProductDetail (props) {
                 },
                 data: {
                     cart: true,
+                    mode: mode,
                     item: item.id,
                     count: count                           
                 }
@@ -138,11 +154,27 @@ function ProductDetail (props) {
         }         
     }    
 
+    function getSliderCount() {
+        if (screens.xxl) {
+            return 8
+        } else if (screens.xl) {
+            return 6
+        } else if (screens.lg) {
+            return 5
+        } else if (screens.md) {
+            return 4
+        } else if (screens.sm) {
+            return 3
+        } else if (screens.xs) {
+            return 2
+        }
+    }
+
     return (
-        <div style={{ padding: '0px 10%' }}>    
+        <div>    
             {item ? (
                 <>
-                    <Breadcrumb style={{ margin: '24px 0' }}>
+                    <Breadcrumb>
                         <Breadcrumb.Item>
                             <Link to="/">
                                 Нүүр хуудас
@@ -157,27 +189,29 @@ function ProductDetail (props) {
                             {item.name}
                         </Breadcrumb.Item>
                     </Breadcrumb>
-                    <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
-                        <Col span={8} style={{ padding: 0 }}>
+                    <Row gutter={[48, 16]} style={{ marginTop: '24px', marginLeft: 0, marginRight: 0, padding: '24px', background: '#fff' }}>
+                        <Col xs={24} sm={24} md={24} lg={10}>
                             {item.images.length > 0 ?
-                            <Carousel autoplay>
-                                {item.images.map(element => (
-                                    <div>
-                                        <img alt={element.image} src={element.image} style={{ width: '100%', height: 'auto' }} />
-                                    </div>
-                                ))}
-                            </Carousel>              
-                            : <img alt={item.name} src={blank} style={{ width: '100%', height: 'auto' }} />
+                                <Carousel autoplay>
+                                    {item.images.map(element => (
+                                        <div>
+                                            <img alt={element.image} src={element.image} style={{ width: '100%', height: 'auto' }} />
+                                        </div>
+                                    ))}
+                                </Carousel>              
+                            : 
+                                <img alt={item.name} src={blank} style={{ width: '100%', height: 'auto' }} />
                             }
                         </Col>
-                        <Col span={16} style={{ padding: '0 0 0 32px' }}>
+                        <Col xs={24} sm={24} md={24} lg={14} style={{ padding: 0 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div>
                                     <Typography.Title level={3} style={{ margin: 0 }}>{item.name}</Typography.Title>                            
                                     <Typography.Text type="secondary" style={{ fontSize: '16px' }}>{getCategory(item.category)}</Typography.Text>
                                 </div>
                                 <div>
-                                    <Typography.Title level={3}>{item.company ? item.company : undefined}</Typography.Title>                                    
+                                    {/* <Typography.Title level={3}>{item.company ? item.company : undefined}</Typography.Title>  */}
+                                    <Tag color="#2d2d2d" style={{ fontSize: '16px' }}>Dseabi</Tag>                                   
                                 </div>
                             </div>                            
                             <Divider style={{ margin: '16px 0' }} />
@@ -190,17 +224,20 @@ function ProductDetail (props) {
                             <Divider style={{ margin: '16px 0' }} />                                                                                                                                                                                                                          
                             <Typography.Text style={{ fontSize: '18px' }}>Тоо:</Typography.Text>
                             <InputNumber value={count} size="large" min={1} max={100} style={{ margin: '0 8px 8px 8px' }} onChange={(val) => setCount(val)} />                                                                       
-                            <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={addToCart} >                                    
-                                { cart && cart.find(x => x.item.id === item.id) ? 'Сагснаас гаргах' : 'Сагсанд хийх' }                                                              
-                            </Button>
+                            {cart && cart.find(x => x.item.id === item.id) ? (
+                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={() => addToCart("delete")} >Сагснаас гаргах</Button>
+                            ) : (
+                                <Button type="ghost" size="large" icon={<ShoppingCartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={() => addToCart("create")} >Сагсанд хийх</Button>
+                            )}                            
                             <Link to="/profile?key=cart">
                                 <Button type="primary" size="large" icon={<ShoppingOutlined />} style={{ margin: '0 8px 8px 0' }}>Захиалах</Button>                                
-                            </Link>
-                            <br />
+                            </Link>                            
                             <Button danger type="primary" size="large" icon={<HeartOutlined />} style={{ margin: '0 8px 8px 0' }} onClick={addToSaved}>
                                 { favorite && favorite.find(x => x.id === item.id) ? 'Хадгалсан' : 'Хадгалах' }                                    
                             </Button>
-                            <Button type="ghost" size="large" icon={<ShopOutlined />} style={{ margin: '0 8px 8px 0' }}>Зарагдаж буй салбарууд</Button>                            
+                            <Link to={`/productshop/${item.id}`}>
+                                <Button type="ghost" size="large" icon={<ShopOutlined />} style={{ margin: '0 8px 8px 0' }}>Зарагдаж буй салбарууд</Button>                            
+                            </Link>
                             <Divider style={{ margin: '16px 0' }} />
                             {item.tag.map(tag => {
                                 return (
@@ -208,17 +245,17 @@ function ProductDetail (props) {
                                 )                                
                             })}
                             <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px', marginTop: '16px' }}>
-                                <div>
-                                    <CarOutlined style={{ fontSize: '24px' }} />
-                                </div>
-                                <div style={{ marginLeft: '16px' }}>
-                                    <Typography.Text>14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text>
-                                </div>
+                                <div><Avatar size={64} icon={<CarOutlined />} style={{ background: '#dedede', color: '#000', marginRight: '16px' }} /></div>
+                                <div><Typography.Text>14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text></div>
                             </div>
+                            {/* <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px', marginTop: '16px' }}>
+                                <div><Avatar size={64} icon={<CreditCardOutlined />} style={{ background: '#dedede', color: '#000', marginRight: '16px' }} /></div>
+                                <div><Typography.Text>14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text></div>
+                            </div>                             */}
                         </Col>
                     </Row>
-                    <div style={{ marginTop: '24px' }}>
-                        <Typography.Title level={4} style={{ margin: 0 }}>Бүтээгдэхүүний мэдээлэл:</Typography.Title>
+                    <div style={{ marginTop: '24px', padding: '24px', background: '#fff' }}>
+                        <Typography.Title level={5} style={{ margin: 0 }}>Бүтээгдэхүүний мэдээлэл:</Typography.Title>
                         <Typography.Paragraph>
                             {item.description}                                
                         </Typography.Paragraph>
@@ -238,11 +275,33 @@ function ProductDetail (props) {
                         <Typography.Paragraph>
                             {item.caution}                                
                         </Typography.Paragraph>
-                    </div>                    
+                    </div>           
+                    <Typography.Title level={4} style={{ marginTop: '24px' }}>Төстэй бүтээгдэхүүнүүд:</Typography.Title>
+                    <div>                        
+                        {suggestedItems ? (
+                            <InfiniteCarousel                    
+                                dots={false}
+                                showSides={true}
+                                sidesOpacity={.5}
+                                sideSize={.1}
+                                slidesToScroll={2}
+                                slidesToShow={getSliderCount()}
+                                scrollOnDevice={true}                    
+                            >
+                                {suggestedItems.map(item => {
+                                    return (
+                                        <ProductCard history={props.history} item={item} user={user} type="" />
+                                    )
+                                })}
+                            </InfiniteCarousel>
+                        ) : (
+                            <></>
+                        )}            
+                    </div>         
                 </>
             ) : (
                 <></>
-            )}            
+            )}                      
         </div>
     )
 }
