@@ -162,7 +162,7 @@ function ProductCard (props) {
                         <EllipsisOutlined key="ellip" onClick={() => setVisible(true)} />
                     </Tooltip>,                                        
                 ] : props.type === "favorite" ? [
-                    <Button danger icon={<MinusCircleOutlined />} type="text" onClick={onRemove}>Жагсаалтаас хасах</Button>
+                    <Button danger icon={<MinusCircleOutlined />} type="text" onClick={onRemove}>Хасах</Button>
                 ] : <></>}
             >
                 <Link to={`/products/${props.item.id}`}>
