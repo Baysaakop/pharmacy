@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Menu, Badge, Tooltip, Tag, Avatar, Typography, Input, Dropdown } from 'antd';
+import { Button, Grid, Menu, Badge, Tooltip, Tag, Avatar, Input, Dropdown } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { DatabaseOutlined, GlobalOutlined, HeartOutlined, InfoCircleOutlined, MenuOutlined, PhoneOutlined, ReadOutlined, ShopOutlined, ShoppingCartOutlined, StarOutlined, PercentageOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
@@ -9,14 +9,6 @@ import api from '../api';
 import logo from './logo.png';
 
 const { useBreakpoint } = Grid;
-
-const styleHeaderMobile = {
-    display: 'flex',
-    justifyContent: 'space-between', 
-    alignItems: 'center',
-    padding: '5%',
-    height: '80px',
-}
 
 function CustomMenu (props) {    
     const screens = useBreakpoint()
@@ -179,7 +171,7 @@ function CustomMenu (props) {
                             </div>
                         </Link>
                         <div className="contact">                            
-                            <div style={{ margin: 0, fontWeight: 'bold', fontSize: '20px', color: 'black' }}>7777-8888</div>                       
+                            <div style={{ margin: 0, fontWeight: 'bold', fontSize: '20px', color: 'black' }}>7607-7722</div>                       
                             <div style={{ margin: 0, color: '#8e8e8e', fontSize: '12px', marginTop: '-8px' }}>Холбоо барих дугаар</div>       
                         </div>
                         <div className="user" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
@@ -221,7 +213,7 @@ function CustomMenu (props) {
                                     ) : (<></>)}
                                     <Link to="/profile">
                                         <Tooltip title="Профайл">                                        
-                                            <Button danger type="primary" size="middle" icon={<UserOutlined />} style={{ marginLeft: '12px' }} />
+                                            <Button type="primary" size="middle" icon={<UserOutlined />} style={{ marginLeft: '12px', background: '#2ed573', border: 0 }} />
                                         </Tooltip>
                                     </Link> 
                                     <div style={{ marginLeft: '12px' }}>
@@ -247,7 +239,7 @@ function CustomMenu (props) {
                         >   
                             <Menu.Item key="brandproducts" style={{ margin: 0 }}>
                                 <Link to="/brandproducts">
-                                    <Tag color="#e84118" style={{ fontSize: '14px', padding: '3px 8px' }}>                                    
+                                    <Tag color="#2ed573" style={{ fontSize: '14px', padding: '3px 8px' }}>                                    
                                     <StarOutlined style={{ marginRight: '4px' }} /> Брэнд бүтээгдэхүүн
                                     </Tag>
                                 </Link>

@@ -1,10 +1,11 @@
-import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag, Radio, Space, Pagination } from "antd";
+import { Breadcrumb, Col, Input, List, Row, Typography, message, Tag, Radio, Space, Pagination, Select, Button } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import axios from "axios";
 import api from "../api";
 import { connect } from 'react-redux';
+import { SearchOutlined } from "@ant-design/icons";
 
 const { Search } = Input
 const { CheckableTag } = Tag
@@ -130,7 +131,7 @@ function ProductList (props) {
                 <Col xs={24} sm={24} md={24} lg={6}>
                     <div style={{ width: '100%', padding: '16px', background: '#fff', borderRadius: '2px' }}>
                         <Typography.Title level={5}>Бүтээгдэхүүн хайх:</Typography.Title>
-                        <Search placeholder="Бүтээгдэхүүний нэр" onSearch={onSearch} enterButton />
+                        <Search placeholder="Бүтээгдэхүүний нэр" onSearch={onSearch} enterButton={<Button type="primary" style={{ background: '#2ed573', border: 0 }} icon={<SearchOutlined />} />} />
                         <Typography.Title level={5} style={{ marginTop: '16px' }}>Ангилал:</Typography.Title>
                         <Radio.Group onChange={onSelectCategory}>
                             <Space direction="vertical">
@@ -152,6 +153,17 @@ function ProductList (props) {
                     </div>                    
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={18}>
+                    <div style={{ background: '#fff', padding: '16px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography.Title level={5} style={{ margin: 0 }}>Нийт: {total} бүтээгдэхүүн</Typography.Title>
+                        <div>
+                            <Select defaultValue="newfirst" style={{ width: '180px' }}>
+                                <Select.Option value="newfirst">Шинэ нь эхэндээ</Select.Option>
+                                <Select.Option value="oldfirst">Хуучин нь эхэндээ</Select.Option>
+                                <Select.Option value="pricelow">Үнэ өсөхөөр</Select.Option>
+                                <Select.Option value="pricehigh">Үнэ буурахаар</Select.Option>
+                            </Select>                            
+                        </div>
+                    </div>
                     <List
                         grid={{
                             gutter: 16,

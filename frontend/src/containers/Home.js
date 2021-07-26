@@ -13,11 +13,6 @@ import carousel4 from './carousel4.jpg'
 
 const { useBreakpoint } = Grid
 
-const contentStyle = {
-    height: '360px',    
-    textAlign: 'center',
-};
-
 function Home (props) {    
     
     const screens = useBreakpoint()

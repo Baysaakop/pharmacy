@@ -47,3 +47,7 @@ body {
 .ant-list-vertical .ant-list-item-action > li {
     padding: 0;
 }
+
+.ant-input-search > .ant-input-group > .ant-input-group-addon:last-child .ant-input-search-button:not(.ant-btn-primary) {
+    color: rgba(0, 0, 0, 1);
+}

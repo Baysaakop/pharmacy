@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"; 
 import api from "../api";
 import { Link } from "react-router-dom";
-import { CarOutlined, CreditCardOutlined, DeleteOutlined, GoldOutlined, MinusOutlined, MobileOutlined, PlusOutlined, ShoppingOutlined } from "@ant-design/icons";
+import { CarOutlined, DeleteOutlined, GoldOutlined, MinusOutlined, MobileOutlined, PlusOutlined, ShoppingOutlined } from "@ant-design/icons";
 
 function Cart (props) {
     const [form] = Form.useForm()
@@ -19,7 +19,7 @@ function Cart (props) {
             phone_number: props.user.profile.phone_number,
             address: getAddress(props.user.profile.address)
         })
-    }, [props.items])
+    }, [props.items]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function getAmount(cartitems) {
         let total = 0
@@ -186,20 +186,8 @@ function Cart (props) {
                         )}
                     />  
                     <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px', marginTop: '16px' }}>
-                        <div>                            
-                            <Avatar size={64} icon={<CarOutlined />} style={{ background: '#dedede', color: '#000' }} />
-                        </div>
-                        <div style={{ marginLeft: '16px' }}>
-                            <Typography.Text>14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text>
-                        </div>
-                    </div>
-                    <div style={{ border: '1px solid #dedede', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '16px 8px', marginTop: '16px' }}>
-                        <div>
-                            <Avatar size={64} icon={<CreditCardOutlined />} style={{ background: '#dedede', color: '#000' }} />
-                        </div>
-                        <div style={{ marginLeft: '16px' }}>
-                            <Typography.Text>Төлбөр төлөх аргачлал</Typography.Text>
-                        </div>
+                        <div><Avatar size={64} icon={<CarOutlined />} style={{ background: '#dedede', color: '#000', marginRight: '16px' }} /></div>
+                        <div><Typography.Text>14:00 цагаас өмнө захиалсан бүтээгдэхүүн тухайн өдөртөө хүргэгдэх бөгөөд 14:00 цагаас хойш захиалсан бүтээгдэхүүн дараа өдөртөө багтан танд хүргэгдэх болно.</Typography.Text></div>
                     </div>
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={8}>

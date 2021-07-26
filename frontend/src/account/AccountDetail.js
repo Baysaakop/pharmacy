@@ -121,7 +121,7 @@ function AccountDetail (props) {
                             <Input                                 
                                 disabled
                                 prefix={<EnvironmentOutlined style={{ color: '#a1a1a1' }} />} 
-                                suffix={<Button type="primary" onClick={() => setVisible(true)}>Засах</Button>}
+                                suffix={<Button type="primary" style={{ background: '#2ed573', border: 0 }} onClick={() => setVisible(true)}>Засах</Button>}
                                 defaultValue={getAddress(props.user.profile.address)}                                                                                
                             />                            
                         </Form.Item>  
@@ -137,7 +137,7 @@ function AccountDetail (props) {
                 </Modal>                                              
                 <Form.Item>                                                                  
                     <Popconfirm title="Хадгалах уу？" okText="Тийм" cancelText="Үгүй" onConfirm={form.submit}>
-                        <Button type="primary" icon={<CheckOutlined />} >
+                        <Button type="primary" icon={<CheckOutlined />} style={{ background: '#2ed573', border: 0 }} >
                             Хадгалах
                         </Button>
                     </Popconfirm>                                                                                                            

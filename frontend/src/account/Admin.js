@@ -36,8 +36,8 @@ function Admin (props) {
     }, [props.location, props.token]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <div style={{ padding: '0px 10%' }}>
-            <Breadcrumb style={{ margin: '24px 0' }}>
+        <div>
+            <Breadcrumb>
                 <Breadcrumb.Item>
                     <Link to="/">Нүүр хуудас</Link>
                 </Breadcrumb.Item>
@@ -45,74 +45,76 @@ function Admin (props) {
                     Админ
                 </Breadcrumb.Item>
             </Breadcrumb>
-            { !user || parseInt(user.profile.role) > 2 ? (
-                <Result
-                    status="403"
-                    title="Нэвтрэх боломжгүй"
-                    subTitle="Уучлаарай, та энэ хуудсанд нэвтрэх боломжгүй байна."
-                    extra={
-                        <Link to="/">
-                            <Button type="primary">Нүүр хуудас руу буцах</Button>
-                        </Link>
-                    }
-                />
-            ) : (
-                <Tabs defaultActiveKey="1" style={{ marginBottom: '16px' }}>
-                    <Tabs.TabPane tab="Бүтээгдэхүүн" key="1">
-                        <Tabs defaultActiveKey="1">
-                            <Tabs.TabPane tab="Нэмэх" key="1">
-                                <ProductAdd token={props.token} />
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                <ProductEdit token={props.token} />
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Төрөл" key="2">
-                        <Tabs defaultActiveKey="1">
-                            <Tabs.TabPane tab="Нэмэх" key="1">
-                                <CategoryAdd token={props.token} />
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                <CategoryEdit token={props.token} />
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Таг" key="3">
-                        <Tabs defaultActiveKey="1">
-                            <Tabs.TabPane tab="Нэмэх" key="1">
-                                <TagAdd token={props.token} />
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                <TagEdit token={props.token} />
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Компани" key="4">
-                        <Tabs defaultActiveKey="1">
-                            <Tabs.TabPane tab="Нэмэх" key="1">
-                                <CompanyAdd token={props.token} />
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                <CompanyEdit token={props.token} />
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Салбар" key="5">
-                        <Tabs defaultActiveKey="1">
-                            <Tabs.TabPane tab="Нэмэх" key="1">
-                                <ShopAdd user={user} />
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab="Засах / Хасах" key="2">
-                                <ShopEdit user={user} />
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Мэдээ" key="6">
-                        Мэдээ
-                    </Tabs.TabPane>
-                </Tabs>
-            )}
+            <div style={{ marginTop: '24px', padding: '16px', background: '#fff' }}>
+                { !user || parseInt(user.profile.role) > 2 ? (
+                    <Result
+                        status="403"
+                        title="Нэвтрэх боломжгүй"
+                        subTitle="Уучлаарай, та энэ хуудсанд нэвтрэх боломжгүй байна."
+                        extra={
+                            <Link to="/">
+                                <Button type="primary">Нүүр хуудас руу буцах</Button>
+                            </Link>
+                        }
+                    />
+                ) : (
+                    <Tabs defaultActiveKey="1">
+                        <Tabs.TabPane tab="Бүтээгдэхүүн" key="1">
+                            <Tabs defaultActiveKey="1">
+                                <Tabs.TabPane tab="Нэмэх" key="1">
+                                    <ProductAdd token={props.token} />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="Засах / Хасах" key="2">
+                                    <ProductEdit token={props.token} />
+                                </Tabs.TabPane>
+                            </Tabs>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Төрөл" key="2">
+                            <Tabs defaultActiveKey="1">
+                                <Tabs.TabPane tab="Нэмэх" key="1">
+                                    <CategoryAdd token={props.token} />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="Засах / Хасах" key="2">
+                                    <CategoryEdit token={props.token} />
+                                </Tabs.TabPane>
+                            </Tabs>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Таг" key="3">
+                            <Tabs defaultActiveKey="1">
+                                <Tabs.TabPane tab="Нэмэх" key="1">
+                                    <TagAdd token={props.token} />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="Засах / Хасах" key="2">
+                                    <TagEdit token={props.token} />
+                                </Tabs.TabPane>
+                            </Tabs>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Компани" key="4">
+                            <Tabs defaultActiveKey="1">
+                                <Tabs.TabPane tab="Нэмэх" key="1">
+                                    <CompanyAdd token={props.token} />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="Засах / Хасах" key="2">
+                                    <CompanyEdit token={props.token} />
+                                </Tabs.TabPane>
+                            </Tabs>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Салбар" key="5">
+                            <Tabs defaultActiveKey="1">
+                                <Tabs.TabPane tab="Нэмэх" key="1">
+                                    <ShopAdd user={user} />
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="Засах / Хасах" key="2">
+                                    <ShopEdit user={user} />
+                                </Tabs.TabPane>
+                            </Tabs>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Мэдээ" key="6">
+                            Мэдээ
+                        </Tabs.TabPane>
+                    </Tabs>
+                )}
+            </div>            
         </div>
     )
 }
